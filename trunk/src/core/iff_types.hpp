@@ -9,7 +9,10 @@
 #define IFF_TYPES_HPP_
 
 #if defined(_MSC_VER)
+#define uint64_t unsigned __int64;
 #define uint32_t unsigned int
+#define uint16_t unsigned short
+#define uint8_t  unsigned char
 #else
 #include <stdint.h>
 #endif
