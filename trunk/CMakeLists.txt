@@ -43,6 +43,7 @@ endif ()
 set (build_modules 
 core
 test
+gui
 )
 
 foreach (mdl ${build_modules})
