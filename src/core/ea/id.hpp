@@ -5,42 +5,44 @@
  *      Author: igorgu
  */
 
-#ifndef ID_HPP_
-#define ID_HPP_
+#ifndef __IFF_CORE_EA_ID_HPP__
+#define __IFF_CORE_EA_ID_HPP__
 
 #include <iostream>
 #include "core/iff_types.hpp"
 
-class iff_reader_c;
-class id_c;
-
-bool operator == (const id_c& a, const id_c& b);
-bool operator != (const id_c& a, const id_c& b);
-bool operator <  (const id_c& a, const id_c& b);
-bool operator <= (const id_c& a, const id_c& b);
-bool operator >  (const id_c& a, const id_c& b);
-bool operator >= (const id_c& a, const id_c& b);
-
-std::ostream& operator << (std::ostream& os, const id_c& b);
-
-class id_c
+namespace iff
 {
-	friend class iff_reader_c;
+  namespace ea
+  {
+    class id_c;
 
-	friend bool operator == (const id_c& a, const id_c& b);
-	friend bool operator != (const id_c& a, const id_c& b);
-	friend bool operator <  (const id_c& a, const id_c& b);
-	friend bool operator <= (const id_c& a, const id_c& b);
-	friend bool operator >  (const id_c& a, const id_c& b);
-	friend bool operator >= (const id_c& a, const id_c& b);
-	friend std::ostream& operator << (std::ostream& os, const id_c& b);
+    bool operator == (const id_c& a, const id_c& b);
+    bool operator != (const id_c& a, const id_c& b);
+    bool operator <  (const id_c& a, const id_c& b);
+    bool operator <= (const id_c& a, const id_c& b);
+    bool operator >  (const id_c& a, const id_c& b);
+    bool operator >= (const id_c& a, const id_c& b);
 
-public:
-	id_c(char a, char b, char c, char d);
-	~id_c();
-	id_c (iff_id_t id);
-private:
-	iff_id_t m_id;
-};
+    class id_c
+    {
+      friend bool operator == (const id_c& a, const id_c& b);
+      friend bool operator != (const id_c& a, const id_c& b);
+      friend bool operator <  (const id_c& a, const id_c& b);
+      friend bool operator <= (const id_c& a, const id_c& b);
+      friend bool operator >  (const id_c& a, const id_c& b);
+      friend bool operator >= (const id_c& a, const id_c& b);
 
-#endif /* ID_HPP_ */
+    public:
+      id_c(char a, char b, char c, char d);
+      ~id_c();
+      id_c (iff_id_t id);
+      
+      std::string to_string () const;
+    private:
+      iff_id_t m_id;
+    };
+
+  } // ns ea
+} // ns iff
+#endif 
