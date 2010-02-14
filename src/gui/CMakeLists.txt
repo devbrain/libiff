@@ -1,0 +1,8 @@
+FIND_PACKAGE(Qt4 REQUIRED)
+
+INCLUDE(${QT_USE_FILE})
+
+SET (src main.cpp)
+
+ADD_EXECUTABLE(iff_gui ${src})
+TARGET_LINK_LIBRARIES (iff_gui ${QT_LIBRARIES})
