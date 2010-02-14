@@ -1,8 +1,8 @@
 #ifndef __EA_IO_HPP__
 #define __EA_IO_HPP__
 
-#include "iff_types.hpp"
-#include "id.hpp"
+#include "core/iff_types.hpp"
+#include "core/ea/id.hpp"
 
 class ea_io_c 
 {

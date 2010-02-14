@@ -1,6 +1,6 @@
 #include <iostream>
-#include "generic_iff_reader.hpp"
-#include "ea_io.hpp"
+#include "core/generic_iff_reader.hpp"
+#include "core/ea/ea_io.hpp"
 
 class ea_iff_reader_c : public generic_iff_reader_c <ea_io_c>
 {
