@@ -1,4 +1,4 @@
-#include "ea_io.hpp"
+#include "core/ea/ea_io.hpp"
 
 static const int __is_big_endian_ = 1;
 #define is_bigendian() ( (*(char*)&__is_big_endian_) == 0 )

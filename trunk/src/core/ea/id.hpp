@@ -9,7 +9,7 @@
 #define ID_HPP_
 
 #include <iostream>
-#include "iff_types.hpp"
+#include "core/iff_types.hpp"
 
 class iff_reader_c;
 class id_c;
