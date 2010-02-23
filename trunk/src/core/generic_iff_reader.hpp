@@ -3,20 +3,21 @@
 
 #include <fstream>
 
-enum status_t
-  {
-    eOK,
-    eNOT_IFF,
-    eIO_ERROR
-  };
 
 
 template <class IO_POLICY>
 class generic_iff_reader_c
 {
 public:
-  typedef typename IO_POLICY::word_t word_t;
-  typedef typename IO_POLICY::id_t   id_t;
+  enum status_t
+  {
+    eOK,
+    eNOT_IFF,
+    eIO_ERROR
+  };
+
+public:
+  typedef typename IO_POLICY::id_t        id_t;
   
 public:
   generic_iff_reader_c ();
@@ -47,9 +48,9 @@ private:
 				 std::streamsize group_size, 
 				 std::streamsize file_pos);
 private:
-  status_t _read_group (const id_t& id, std::streamsize& has_so_far);
+  status_t _read_group (const id_t& id, std::streamsize group_size, std::streamsize& has_so_far);
   status_t _read_group_contents (std::streamsize group_size, std::streamsize& has_so_far);
-  status_t _read_chunk (const id_t& id, std::streamsize& has_so_far);
+  status_t _read_chunk (const id_t& id, std::streamsize chunk_size, std::streamsize& has_so_far);
 private:
   std::ifstream   m_ifs;
   std::streamsize m_file_size;
@@ -67,7 +68,7 @@ generic_iff_reader_c<IO_POLICY>::~generic_iff_reader_c ()
 }
 // -------------------------------------------------------------------
 template <class IO_POLICY>
-status_t
+typename generic_iff_reader_c<IO_POLICY>::status_t
 generic_iff_reader_c<IO_POLICY>::open (const char* path)
 {
   m_ifs.open (path, std::ios::binary);
@@ -80,54 +81,56 @@ generic_iff_reader_c<IO_POLICY>::open (const char* path)
   m_ifs.seekg (0, std::ios::beg);
   if (IO_POLICY::has_header ())
     {
-      const unsigned w = IO_POLICY::words_in_header ();
-      word_t* hdr = new word_t [w];
-      for (unsigned i = 0; i<w; i++)
+      const unsigned w = IO_POLICY::bytes_in_header ();
+      char* hdr = new char [w];
+      m_ifs.read (hdr, w);
+      if (!m_ifs.good ())
 	{
-	  hdr [i] = IO_POLICY::read (m_ifs);
+	  delete [] hdr;
+	  return eIO_ERROR;
 	}
       const bool rc = IO_POLICY::check_header (hdr);
-      delete [] hdr;
       if (!rc)
 	{
 	  return eNOT_IFF;
 	}
+      delete [] hdr;
     }
   return eOK;
 }
 // -------------------------------------------------------------------
 template <class IO_POLICY>
-status_t
+typename generic_iff_reader_c<IO_POLICY>::status_t
 generic_iff_reader_c<IO_POLICY>::read ()
 {
-  word_t w = IO_POLICY::read (m_ifs);
-  if (!m_ifs.good ())
+  id_t        id;
+  typename IO_POLICY::size_type_t hsize;
+  std::streamsize sz;
+  if (!IO_POLICY::read_group_header (m_ifs, id, hsize, sz))
     {
       return eIO_ERROR;
     }
-  
-  id_t id (w);
-  std::streamsize has_so_far = sizeof (w);
+
+  std::streamsize has_so_far = sz;
   if (IO_POLICY::is_group (id))
     {
-      return _read_group (id, has_so_far);
+      return _read_group (id, hsize, has_so_far);
     }
   if (!IO_POLICY::should_start_with_group ())
     {
-      return _read_chunk (id, has_so_far);
+      return _read_chunk (id, hsize, has_so_far);
     }
   return eNOT_IFF;
 }
 // -------------------------------------------------------------------
 template <class IO_POLICY>
-status_t
-generic_iff_reader_c<IO_POLICY>::_read_group (const id_t& id, std::streamsize& has_so_far)
+typename generic_iff_reader_c<IO_POLICY>::status_t
+generic_iff_reader_c<IO_POLICY>::_read_group (const id_t& id, std::streamsize group_size, std::streamsize& has_so_far)
 {
   if (!m_ifs.good ())
     {
       return eIO_ERROR;
     }
-  const word_t group_size               = IO_POLICY::read (m_ifs);
 
   has_so_far += sizeof (group_size);
   const std::streamsize real_group_size = IO_POLICY::real_size (group_size);
@@ -136,14 +139,13 @@ generic_iff_reader_c<IO_POLICY>::_read_group (const id_t& id, std::streamsize& h
   std::streamsize in_grp_size = 0;
   if (IO_POLICY::group_has_tag ())
     {
-      word_t w = IO_POLICY::read (m_ifs);
-      has_so_far += sizeof (word_t);
-      in_grp_size += sizeof (word_t);
-      if (!m_ifs.good ())
+      std::streamsize tag_size;
+      if (!IO_POLICY::read_group_id (m_ifs, tag, tag_size))
 	{
 	  return eIO_ERROR;
 	}
-      tag = id_t (w);
+      has_so_far += tag_size;
+      in_grp_size += tag_size;
     }
   
   if (eOK != this->_on_group_enter_safe (id, tag, group_size, group_start))
@@ -166,19 +168,13 @@ generic_iff_reader_c<IO_POLICY>::_read_group (const id_t& id, std::streamsize& h
       return eIO_ERROR;
     }
   
-  if (eOK != this->_on_group_exit_safe (id, tag, group_size, group_start + real_group_size))
-    {
-      return eIO_ERROR;
-    }
-  return eOK;
+  return  this->_on_group_exit_safe (id, tag, group_size, group_start + real_group_size);
 }
 // -------------------------------------------------------------------
 template <class IO_POLICY>
-status_t
-generic_iff_reader_c<IO_POLICY>::_read_chunk (const id_t& id, std::streamsize& has_so_far)
+typename generic_iff_reader_c<IO_POLICY>::status_t
+generic_iff_reader_c<IO_POLICY>::_read_chunk (const id_t& id, std::streamsize chunk_size, std::streamsize& has_so_far)
 {
-  const word_t chunk_size = IO_POLICY::read (m_ifs);
-  has_so_far += sizeof (word_t);
   const std::streamsize now = m_ifs.tellg();
   if (!m_ifs.good ())
     {
@@ -199,22 +195,27 @@ generic_iff_reader_c<IO_POLICY>::_read_chunk (const id_t& id, std::streamsize& h
 }
 // -------------------------------------------------------------------
 template <class IO_POLICY>
-status_t
+typename generic_iff_reader_c<IO_POLICY>::status_t
 generic_iff_reader_c<IO_POLICY>::_read_group_contents (std::streamsize group_size, std::streamsize& has_so_far)
 {
   
   while (has_so_far < group_size)
     {
       const std::streamsize start = m_ifs.tellg ();
-
-      word_t w = IO_POLICY::read (m_ifs);
       
+      id_t        id;
+      typename IO_POLICY::size_type_t hsize;
+      std::streamsize sz;
+      if (!IO_POLICY::read_group_header (m_ifs, id, hsize, sz))
+	{
+	  return eIO_ERROR;
+	}
 
-      id_t id (w);
       if (IO_POLICY::is_group (id))
 	{
-	  std::streamsize gs = sizeof (word_t);
-	  status_t rc =  _read_group (id, gs);
+	  std::streamsize gs = sz;
+
+	  status_t rc =  _read_group (id, hsize, gs);
 	  if (rc != eOK)
 	    {
 	      return rc;
@@ -223,9 +224,9 @@ generic_iff_reader_c<IO_POLICY>::_read_group_contents (std::streamsize group_siz
 	}
       else
 	{
-	  has_so_far += sizeof (w);
+	  has_so_far += sz;
 	  std::streamsize cs = 0;
-	  status_t rc = _read_chunk (id, cs);
+	  status_t rc = _read_chunk (id, hsize, cs);
 	  if (rc != eOK)
 	    {
 	      return rc;
@@ -248,7 +249,7 @@ generic_iff_reader_c<IO_POLICY>::_read_group_contents (std::streamsize group_siz
   return eOK
 // -------------------------------------------------------------------
 template <class IO_POLICY>
-status_t
+typename generic_iff_reader_c<IO_POLICY>::status_t
 generic_iff_reader_c<IO_POLICY>::_on_chunk_enter_safe (const id_t& id, 
 						       std::streamsize chunk_size, 
 						       std::streamsize file_pos)
@@ -259,7 +260,7 @@ generic_iff_reader_c<IO_POLICY>::_on_chunk_enter_safe (const id_t& id,
 }
 // -------------------------------------------------------------------
 template <class IO_POLICY>
-status_t
+typename generic_iff_reader_c<IO_POLICY>::status_t
 generic_iff_reader_c<IO_POLICY>::_on_chunk_exit_safe  (const id_t& id, std::streamsize chunk_size, 
 						       std::streamsize file_pos)
 {
@@ -270,7 +271,7 @@ generic_iff_reader_c<IO_POLICY>::_on_chunk_exit_safe  (const id_t& id, std::stre
 
 // -------------------------------------------------------------------
 template <class IO_POLICY>
-status_t
+typename generic_iff_reader_c<IO_POLICY>::status_t
 generic_iff_reader_c<IO_POLICY>::_on_group_enter_safe (const id_t& id, const id_t& tag, 
 						       std::streamsize chunk_size, 
 						       std::streamsize file_pos)
@@ -281,7 +282,7 @@ generic_iff_reader_c<IO_POLICY>::_on_group_enter_safe (const id_t& id, const id_
 }
 // -------------------------------------------------------------------
 template <class IO_POLICY>
-status_t
+typename generic_iff_reader_c<IO_POLICY>::status_t
 generic_iff_reader_c<IO_POLICY>::_on_group_exit_safe  (const id_t& id, const id_t& tag,
 						       std::streamsize chunk_size, 
 						       std::streamsize file_pos)

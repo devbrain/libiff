@@ -34,6 +34,7 @@ namespace iff
       friend bool operator >= (const id_c& a, const id_c& b);
 
     public:
+      id_c () {}
       id_c(char a, char b, char c, char d);
       ~id_c();
       id_c (iff_id_t id);
