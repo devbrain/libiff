@@ -11,19 +11,23 @@ namespace iff
     class io_c 
     {
     public:
-      typedef uint32_t word_t;
+      typedef uint32_t size_type_t;
       typedef id_c     id_t;
     public:
-      static word_t read  (std::istream& is);
-      static void   write (std::ostream& os, word_t v);
-  
       static bool     has_header ();
-      static unsigned words_in_header ();
-      static bool     check_header (word_t* hdr);
+      static unsigned bytes_in_header ();
+      static bool     check_header (const char* hdr);
       static bool     should_start_with_group ();
       static bool     is_group     (const id_c& id);
       static bool     group_has_tag ();
-      static std::streamsize real_size (word_t size);
+
+      static std::streamsize real_size (size_type_t size);
+      static std::streamsize size_of_id ();
+
+      static bool read_group_header (std::istream& is, id_t& id, size_type_t& size, 
+				     std::streamsize& total_size);
+      static bool read_group_id     (std::istream& is, id_t& id, std::streamsize& size);
+      
     };
   } // ns ea
 } // ns ea
