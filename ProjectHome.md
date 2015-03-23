@@ -1,0 +1,1 @@
+This library is aimed to support IFF files.
