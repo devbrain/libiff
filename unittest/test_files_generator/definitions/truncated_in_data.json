@@ -1,0 +1,25 @@
+{
+  "name": "truncated_in_data",
+  "description": "File truncated in chunk data",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "TEST",
+    "children": [
+      {
+        "id": "DATA",
+        "data": {
+          "type": "text",
+          "value": "This data will be truncated halfway through"
+        }
+      }
+    ]
+  },
+  "corruptions": [
+    {
+      "type": "truncate_at",
+      "offset": 30,
+      "comment": "Truncate in the middle of DATA chunk content"
+    }
+  ]
+}

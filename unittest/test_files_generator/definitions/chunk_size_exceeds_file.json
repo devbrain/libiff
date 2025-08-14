@@ -1,0 +1,27 @@
+{
+  "name": "chunk_size_exceeds_file",
+  "description": "Chunk claims size larger than remaining file",
+  "format": "RIFF",
+  "root": {
+    "id": "RIFF",
+    "type": "WAVE",
+    "children": [
+      {
+        "id": "data",
+        "comment": "Claims 1000 bytes but only has 4",
+        "data": {
+          "type": "bytes",
+          "value": [1, 2, 3, 4]
+        }
+      }
+    ]
+  },
+  "corruptions": [
+    {
+      "type": "invalid_size",
+      "offset": 16,
+      "value": "0x03E8",
+      "comment": "Set data chunk size to 1000 (0x3E8) at offset 16"
+    }
+  ]
+}

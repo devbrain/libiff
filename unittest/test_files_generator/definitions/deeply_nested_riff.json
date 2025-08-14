@@ -1,0 +1,49 @@
+{
+  "name": "deeply_nested_riff",
+  "description": "RIFF file with deep nesting to test depth limits",
+  "format": "RIFF",
+  "root": {
+    "id": "RIFF",
+    "type": "TEST",
+    "children": [
+      {
+        "id": "LIST",
+        "type": "LVL1",
+        "children": [
+          {
+            "id": "LIST",
+            "type": "LVL2",
+            "children": [
+              {
+                "id": "LIST",
+                "type": "LVL3",
+                "children": [
+                  {
+                    "id": "LIST",
+                    "type": "LVL4",
+                    "children": [
+                      {
+                        "id": "LIST",
+                        "type": "LVL5",
+                        "children": [
+                          {
+                            "id": "data",
+                            "comment": "Data at depth 6",
+                            "data": {
+                              "type": "text",
+                              "value": "DEEP"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

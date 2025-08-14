@@ -1,0 +1,17 @@
+{
+  "name": "malformed_list",
+  "description": "LIST chunk missing type field",
+  "format": "IFF",
+  "root": {
+    "id": "LIST",
+    "comment": "Missing type field - will appear truncated",
+    "children": []
+  },
+  "corruptions": [
+    {
+      "type": "truncate_at",
+      "offset": 8,
+      "comment": "Truncate right after size field, before type"
+    }
+  ]
+}

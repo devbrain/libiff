@@ -1,0 +1,29 @@
+{
+  "name": "large_chunks",
+  "description": "Test size limit warnings with large chunks",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "TEST",
+    "children": [
+      {
+        "id": "DATA",
+        "comment": "Large data chunk to trigger size warning",
+        "data": {
+          "type": "pattern",
+          "value": "41424344454647484950",
+          "repeat": 1000
+        }
+      },
+      {
+        "id": "BIG1",
+        "comment": "Another large chunk",
+        "data": {
+          "type": "pattern",
+          "value": "00010203040506070809",
+          "repeat": 2000
+        }
+      }
+    ]
+  }
+}

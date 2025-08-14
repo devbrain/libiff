@@ -1,0 +1,17 @@
+{
+  "name": "container_missing_type",
+  "description": "Container chunk missing required type field",
+  "format": "IFF",
+  "root": {
+    "id": "LIST",
+    "type": "TEST",
+    "children": []
+  },
+  "corruptions": [
+    {
+      "type": "truncate_at",
+      "offset": 8,
+      "comment": "Truncate right after size, removing type field"
+    }
+  ]
+}

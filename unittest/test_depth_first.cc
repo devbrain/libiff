@@ -10,7 +10,7 @@
 
 #include "unittest_config.h"
 #include <iff/chunk_iterator.hh>
-#include "../src/libiff/input.hh"
+
 
 using namespace iff;
 using namespace std::string_literals;
@@ -45,13 +45,7 @@ TEST_CASE("verify depth-first traversal") {
             }
             it->next();
         }
-        
-        // Print traversal for visualization
-        std::cout << "\nDepth-first traversal:\n";
-        for (const auto& entry : traversal) {
-            std::cout << entry << "\n";
-        }
-        
+
         // Verify depth-first order:
         // We should see FORM:TST1, then immediately its children,
         // not jumping to a sibling at the same level

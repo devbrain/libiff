@@ -1,0 +1,25 @@
+{
+  "name": "io_error_test",
+  "description": "Valid file for simulating I/O errors",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "TEST",
+    "children": [
+      {
+        "id": "DATA",
+        "data": {
+          "type": "text",
+          "value": "This is test data for I/O error simulation"
+        }
+      },
+      {
+        "id": "MORE",
+        "data": {
+          "type": "text",
+          "value": "Additional chunk for testing"
+        }
+      }
+    ]
+  }
+}

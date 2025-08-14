@@ -12,6 +12,7 @@ namespace iff {
     static constexpr auto RIFF = "RIFF"_4cc;
     static constexpr auto RIFX = "RIFX"_4cc;  // Big-endian RIFF (rare)
     static constexpr auto RF64 = "RF64"_4cc;  // 64-bit RIFF
+    static constexpr auto BW64 = "BW64"_4cc;  // EBU Broadcast Wave 64-bit
     static constexpr auto LIST = "LIST"_4cc;
     
     riff_chunk_iterator::riff_chunk_iterator(std::istream& stream)
@@ -38,9 +39,9 @@ namespace iff {
         } else if (root_id == RIFX) {
             m_byte_order = byte_order::big;  // RIFX is big-endian
             m_is_rf64 = false;
-        } else if (root_id == RF64) {
+        } else if (root_id == RF64 || root_id == BW64) {
             m_byte_order = byte_order::little;
-            m_is_rf64 = true;
+            m_is_rf64 = true;  // BW64 uses the same ds64 mechanism as RF64
         } else {
             // Should not happen - factory should have filtered this
             THROW_PARSE("Invalid RIFF format: " + root_id.to_string());
@@ -120,10 +121,11 @@ namespace iff {
                 // std::cerr << "Found ds64 at " << (ds64_start - 8) << ", hiding it\n";
                 parse_ds64_chunk(chunk_size_32);
                 
-                // Update the RF64 container's end offset now that we have the real size
-                if (!m_container_stack.empty() && m_container_stack.top().id == RF64) {
+                // Update the RF64/BW64 container's end offset now that we have the real size
+                if (!m_container_stack.empty() && 
+                    (m_container_stack.top().id == RF64 || m_container_stack.top().id == BW64)) {
                     auto& rf64_container = m_container_stack.top();
-                    // RF64 container starts at offset 0, has 8-byte header, 4-byte type, then data
+                    // RF64/BW64 container starts at offset 0, has 8-byte header, 4-byte type, then data
                     // The riff_size from ds64 includes the type field
                     // Use the minimum of ds64 size and actual file size to handle truncated files
                     std::uint64_t ds64_end = 8 + m_rf64_state.riff_size;
@@ -148,9 +150,9 @@ namespace iff {
             // Apply RF64 size overrides if needed
             std::uint64_t chunk_size = chunk_size_32;
             
-            // For RF64 containers with 0xFFFFFFFF size, we'll fix the size after parsing ds64
+            // For RF64/BW64 containers with 0xFFFFFFFF size, we'll fix the size after parsing ds64
             // For now, use the file size as a temporary upper bound
-            if (m_is_rf64 && chunk_id == RF64 && chunk_size_32 == 0xFFFFFFFF) {
+            if (m_is_rf64 && (chunk_id == RF64 || chunk_id == BW64) && chunk_size_32 == 0xFFFFFFFF) {
                 // Will be fixed after ds64 is parsed
                 chunk_size = m_reader->size() - start_pos - 8;  // Remaining file size
             } else {
@@ -179,9 +181,8 @@ namespace iff {
                 .id = chunk_id,
                 .size = chunk_size,
                 .file_offset = start_pos,
-                .is_container = (chunk_id == RIFF || chunk_id == RIFX || chunk_id == RF64 || chunk_id == LIST),
+                .is_container = (chunk_id == RIFF || chunk_id == RIFX || chunk_id == RF64 || chunk_id == BW64 || chunk_id == LIST),
                 .type = std::nullopt,
-                .source = chunk_source::explicit_data
             };
             
             // Update depth and context
@@ -293,7 +294,7 @@ namespace iff {
             }
             
             // For RIFF containers, update the form type
-            if (header.id == RIFF || header.id == RIFX || header.id == RF64) {
+            if (header.id == RIFF || header.id == RIFX || header.id == RF64 || header.id == BW64) {
                 m_current.current_form = container_type;
             }
             
@@ -328,7 +329,7 @@ namespace iff {
                 const auto& info = temp_stack.top();
                 
                 // Update form context for RIFF containers
-                if ((info.id == RIFF || info.id == RIFX || info.id == RF64) && info.type) {
+                if ((info.id == RIFF || info.id == RIFX || info.id == RF64 || info.id == BW64) && info.type) {
                     m_current.current_form = info.type;
                 }
                 
@@ -396,8 +397,8 @@ namespace iff {
         }
         
         // Check for specific overrides
-        if (id == RF64 || id == RIFF) {
-            // Root container size override
+        if (id == RF64 || id == BW64 || id == RIFF) {
+            // Root container size override (RIFF in case of RF64/BW64 with override)
             return m_rf64_state.riff_size;
         } else if (id == "data"_4cc && m_rf64_state.data_size > 0) {
             // Data chunk size override (from fixed fields)

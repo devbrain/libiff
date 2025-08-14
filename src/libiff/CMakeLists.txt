@@ -32,14 +32,14 @@ add_library(iff ${LIB_BUILD_TYPE}
         ${LIBIFF_PROJECT_ROOT}/include/iff/exceptions.hh
         ${LIBIFF_PROJECT_ROOT}/include/iff/chunk_iterator.hh
         ${LIBIFF_PROJECT_ROOT}/include/iff/chunk_reader.hh
-        ${LIBIFF_PROJECT_ROOT}/include/iff/chunk_types.hh
+        ${LIBIFF_PROJECT_ROOT}/include/iff/chunk_header.hh
         ${LIBIFF_PROJECT_ROOT}/include/iff/handler_registry.hh
         ${LIBIFF_PROJECT_ROOT}/include/iff/parse_options.hh
 
 )
 
 target_link_libraries(iff
-        PUBLIC failsafe )
+        PUBLIC )
 target_include_directories(iff
         PUBLIC
         ${LIBIFF_PROJECT_ROOT}/include/

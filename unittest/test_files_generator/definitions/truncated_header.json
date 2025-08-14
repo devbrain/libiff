@@ -1,0 +1,25 @@
+{
+  "name": "truncated_header",
+  "description": "File truncated after container header, missing children",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "TEST",
+    "children": [
+      {
+        "id": "DATA",
+        "data": {
+          "type": "text",
+          "value": "TEST DATA CONTENT"
+        }
+      }
+    ]
+  },
+  "corruptions": [
+    {
+      "type": "truncate_at",
+      "offset": 14,
+      "comment": "Truncate after FORM header and type, but before DATA chunk"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "rf64_test",
+  "description": "RF64 file with ds64 chunk for testing",
+  "format": "RF64",
+  "root": {
+    "id": "RF64",
+    "type": "WAVE",
+    "ds64": {
+      "riff_size": 200,
+      "data_size": 100,
+      "sample_count": 48000,
+      "table": []
+    },
+    "children": [
+      {
+        "id": "fmt ",
+        "comment": "Format chunk",
+        "data": {
+          "type": "bytes",
+          "value": [1, 0, 2, 0, 128, 187, 0, 0, 0, 238, 2, 0, 4, 0, 16, 0]
+        }
+      },
+      {
+        "id": "data",
+        "comment": "Audio data",
+        "data": {
+          "type": "pattern",
+          "value": "0000FFFF",
+          "repeat": 25
+        }
+      }
+    ]
+  }
+}

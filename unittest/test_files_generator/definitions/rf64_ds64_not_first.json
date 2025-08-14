@@ -1,0 +1,40 @@
+{
+  "name": "rf64_ds64_not_first",
+  "description": "RF64 where ds64 is not the first chunk after container header",
+  "format": "RF64",
+  "root": {
+    "id": "RF64",
+    "size_marker": "MAX_U32",
+    "type": "WAVE",
+    "children": [
+      {
+        "id": "fmt ",
+        "comment": "fmt chunk before ds64 - violates RF64 spec",
+        "data": {
+          "type": "hex",
+          "value": "01 00 02 00 80 BB 00 00 00 EE 02 00 04 00 10 00"
+        }
+      },
+      {
+        "id": "ds64",
+        "comment": "ds64 should have been first",
+        "data": {
+          "type": "ds64",
+          "riff_size": 200,
+          "data_size": 40,
+          "sample_count": 0,
+          "table": []
+        }
+      },
+      {
+        "id": "data",
+        "size_marker": "MAX_U32",
+        "data": {
+          "type": "pattern",
+          "value": "00 FF 00 FF",
+          "repeat": 10
+        }
+      }
+    ]
+  }
+}

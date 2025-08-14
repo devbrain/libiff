@@ -1,0 +1,37 @@
+{
+  "name": "rf64_multiple_same_id",
+  "description": "RF64 with multiple chunks having same ID needing size overrides",
+  "format": "RF64",
+  "root": {
+    "id": "RF64",
+    "type": "WAVE",
+    "ds64": {
+      "riff_size": 200,
+      "data_size": 0,
+      "sample_count": 0,
+      "table": [
+        {"id": "TEST", "size": 10},
+        {"id": "TEST", "size": 20}
+      ]
+    },
+    "children": [
+      {
+        "id": "TEST",
+        "comment": "First TEST chunk - should get size 10 from table",
+        "data": {
+          "type": "bytes",
+          "value": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        }
+      },
+      {
+        "id": "TEST",
+        "comment": "Second TEST chunk - should get size 20 from table",
+        "data": {
+          "type": "pattern",
+          "value": "AA",
+          "repeat": 20
+        }
+      }
+    ]
+  }
+}

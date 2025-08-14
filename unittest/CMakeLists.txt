@@ -30,8 +30,14 @@ add_executable(iff_unittest
         test_edge_cases.cc
         test_riff_iterator.cc
         test_security.cc
+        test_prop_support.cc
+        test_bw64.cc
+        test_streaming.cc
+        test_warning_callbacks.cc
+        test_reader_errors.cc
+        test_rf64_edge_cases.cc
 )
-target_link_libraries(iff_unittest iff doctest::doctest failsafe)
+target_link_libraries(iff_unittest iff doctest::doctest)
 
 target_include_directories(iff_unittest
         PRIVATE ${CMAKE_CURRENT_BINARY_DIR}

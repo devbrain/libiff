@@ -114,12 +114,14 @@ namespace iff {
                 .file_offset = start_pos,
                 .is_container = (chunk_id == FORM || chunk_id == LIST || chunk_id == CAT || chunk_id == PROP),
                 .type = std::nullopt,
-                .source = chunk_source::explicit_data
             };
             
             // Update depth and context
             m_current.depth = m_container_stack.empty() ? 0 : m_container_stack.top().depth + 1;
             update_container_context();
+            
+            // Check if this is a PROP chunk
+            m_current.is_prop_chunk = (chunk_id == PROP);
             
             // Handle container chunks specially
             if (m_current.header.is_container) {
@@ -191,9 +193,26 @@ namespace iff {
                 .id = header.id,
                 .type = type_tag,
                 .end_offset = content_end,
-                .depth = m_current.depth
+                .depth = m_current.depth,
+                .has_prop_chunks = false  // Will be updated if we find PROP chunks
             };
+            
             m_container_stack.push(state);
+            
+            // If this is a PROP, mark the parent LIST as having PROP chunks
+            if (header.id == PROP && m_container_stack.size() > 1) {
+                // Get parent container (need to access second from top)
+                std::stack<container_state> temp;
+                temp.push(m_container_stack.top());
+                m_container_stack.pop();
+                
+                if (!m_container_stack.empty() && m_container_stack.top().id == LIST) {
+                    m_container_stack.top().has_prop_chunks = true;
+                }
+                
+                // Restore the PROP container
+                m_container_stack.push(temp.top());
+            }
             
             // Update current context
             update_container_context();
@@ -216,6 +235,7 @@ namespace iff {
         // Update current form and container based on stack
         m_current.current_form = std::nullopt;
         m_current.current_container = std::nullopt;
+        m_current.in_list_with_props = false;
         
         // Search stack for innermost FORM and container
         std::stack<container_state> temp = m_container_stack;
@@ -228,6 +248,11 @@ namespace iff {
             
             if ((state.id == LIST || state.id == CAT || state.id == PROP) && !m_current.current_container) {
                 m_current.current_container = state.id;  // Store the container ID itself for tracking
+                
+                // Check if we're in a LIST with PROP chunks
+                if (state.id == LIST && state.has_prop_chunks) {
+                    m_current.in_list_with_props = true;
+                }
             }
             
             temp.pop();

@@ -8,8 +8,8 @@
 #include <sstream>
 
 #include "unittest_config.h"
+#include <iff/exceptions.hh>
 #include <iff/chunk_iterator.hh>
-#include "../src/libiff/input.hh"
 
 using namespace iff;
 using namespace std::string_literals;

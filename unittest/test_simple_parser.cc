@@ -9,7 +9,6 @@
 
 #include "unittest_config.h"
 #include <iff/parser.hh>
-#include "../src/libiff/input.hh"
 
 using namespace iff;
 using namespace std::string_literals;

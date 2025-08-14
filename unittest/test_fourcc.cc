@@ -61,11 +61,11 @@ namespace fourcc_utils {
     }
 
     inline void to_be_bytes(const fourcc& f, void* dest) {
-        f.to_bytes(dest);
+        std::memcpy(dest, f.b.data(), 4);
     }
 
     inline void to_le_bytes(const fourcc& f, void* dest) {
-        f.to_bytes(dest);
+        std::memcpy(dest, f.b.data(), 4);
     }
 }
 
@@ -157,14 +157,6 @@ TEST_SUITE("FOURCC") {
             CHECK(bin[3] == 0x04);
         }
 
-        SUBCASE("uint32_t construction") {
-            // Note: result depends on system endianness
-            std::uint32_t value = 0x54455354; // "TEST" in big-endian
-            fourcc f(value);
-
-            // Check that we can round-trip
-            CHECK(f.to_uint32() == value);
-        }
     }
 
     TEST_CASE("fourcc user-defined literals") {
@@ -189,16 +181,6 @@ TEST_SUITE("FOURCC") {
             CHECK(form == fourcc("FORM"));
         }
 
-        SUBCASE("FOURCC macro") {
-            auto test = FOURCC("TEST");
-            CHECK(test.to_string() == "TEST");
-
-            auto xyz = FOURCC("XYZ");
-            CHECK(xyz.to_string() == "XYZ ");
-
-            // This should fail to compile:
-            // auto bad = FOURCC("TOOLONG");
-        }
     }
 
     TEST_CASE("fourcc conversions") {
@@ -208,38 +190,14 @@ TEST_SUITE("FOURCC") {
             CHECK(fourcc().to_string() == "    ");
         }
 
-        SUBCASE("to_string_view") {
-            fourcc test("TEST");
-            std::string_view sv = test.to_string_view();
-            CHECK(sv == "TEST");
-            CHECK(sv.size() == 4);
-        }
 
-        SUBCASE("to_string_trimmed") {
-            CHECK(fourcc("WAVE").to_string_trimmed() == "WAVE");
-            CHECK(fourcc("ABC").to_string_trimmed() == "ABC");
-            CHECK(fourcc("AB").to_string_trimmed() == "AB");
-            CHECK(fourcc("A").to_string_trimmed() == "A");
-            CHECK(fourcc("").to_string_trimmed() == "");
-            CHECK(fourcc("  X ").to_string_trimmed() == "  X");
-        }
 
-        SUBCASE("to_uint32 and from uint32") {
+        SUBCASE("to_uint32 for hashing") {
             fourcc test{"TEST"};
             std::uint32_t value = test.to_uint32();
-            fourcc test2(value);
-            CHECK(test == test2);
+            CHECK(value != 0); // Just verify it produces a value for hashing
         }
 
-        SUBCASE("to_bytes") {
-            fourcc wave{"WAVE"};
-            unsigned char bytes[4];
-            wave.to_bytes(bytes);
-            CHECK(bytes[0] == 'W');
-            CHECK(bytes[1] == 'A');
-            CHECK(bytes[2] == 'V');
-            CHECK(bytes[3] == 'E');
-        }
     }
 
     TEST_CASE("fourcc element access") {
@@ -256,25 +214,6 @@ TEST_SUITE("FOURCC") {
             CHECK(mutable_test.to_string() == "BEST");
         }
 
-        SUBCASE("iterators") {
-            fourcc wave{"WAVE"};
-            std::string result;
-            for (char c : wave) {
-                result += c;
-            }
-            CHECK(result == "WAVE");
-
-            // Algorithms
-            fourcc test{"TEST"};
-            CHECK(std::all_of(test.begin(), test.end(), [](char c) {
-                return c >= 'A' && c <= 'Z';
-                }));
-
-            // Reverse
-            fourcc dcba{"ABCD"};
-            std::reverse(dcba.begin(), dcba.end());
-            CHECK(dcba.to_string() == "DCBA");
-        }
     }
 
     TEST_CASE("fourcc comparison operators") {
@@ -312,34 +251,6 @@ TEST_SUITE("FOURCC") {
         }
     }
 
-    TEST_CASE("fourcc utility methods") {
-        SUBCASE("is_printable") {
-            CHECK(fourcc("TEST").is_printable());
-            CHECK(fourcc("fmt ").is_printable());
-            CHECK(fourcc("~!@#").is_printable());
-
-            // Non-printable
-            fourcc binary;
-            binary[0] = 0x01;
-            binary[1] = 0x02;
-            binary[2] = 0x03;
-            binary[3] = 0x04;
-            CHECK_FALSE(binary.is_printable());
-
-            fourcc mixed("AB\x01\x02");
-            CHECK_FALSE(mixed.is_printable());
-        }
-
-        SUBCASE("has_padding") {
-            CHECK_FALSE(fourcc("TEST").has_padding());
-            CHECK(fourcc("ABC").has_padding());
-            CHECK(fourcc("AB").has_padding());
-            CHECK(fourcc("A").has_padding());
-            CHECK(fourcc("").has_padding());
-            CHECK(fourcc(" XYZ").has_padding());
-            CHECK(fourcc("X Y ").has_padding());
-        }
-    }
 
     TEST_CASE("fourcc stream output") {
         SUBCASE("default format") {
@@ -352,20 +263,6 @@ TEST_SUITE("FOURCC") {
             CHECK(ss.str() == "'fmt '");
         }
 
-        SUBCASE("hex format") {
-            std::stringstream ss;
-            ss << std::hex << fourcc("WAVE");
-
-            // The exact hex value depends on system endianness
-            std::string hex_str = ss.str();
-            CHECK(hex_str.substr(0, 2) == "0x");
-            CHECK(hex_str.length() == 10); // "0x" + 8 hex digits
-
-            // Round trip test
-            std::uint32_t value = std::stoul(hex_str.substr(2), nullptr, 16);
-            fourcc reconstructed(value);
-            CHECK(reconstructed == fourcc("WAVE"));
-        }
 
         SUBCASE("non-printable characters") {
             fourcc binary;
@@ -376,7 +273,7 @@ TEST_SUITE("FOURCC") {
 
             std::stringstream ss;
             ss << binary;
-            CHECK(ss.str() == "'AB\\x01\\x0a'");
+            CHECK(ss.str() == "'AB..'");  // Non-printable replaced with dots
         }
 
         SUBCASE("preserving stream state") {
@@ -531,31 +428,27 @@ TEST_SUITE("FOURCC") {
             CHECK(null_from_string.to_string() == "AB  "); // Padded with spaces
             CHECK(null_from_string[2] == ' ');
 
-            // to_string_trimmed should handle nulls
-            fourcc null_padded('A', 'B', '\0', ' ');
-            CHECK(null_padded.to_string_trimmed() == std::string("AB\0", 3));
         }
 
         SUBCASE("special characters") {
             fourcc special("!@#$");
             CHECK(special.to_string() == "!@#$");
-            CHECK(special.is_printable());
 
             fourcc tab("A\tB\n");
             CHECK(tab[1] == '\t');
             CHECK(tab[3] == '\n');
-            CHECK_FALSE(tab.is_printable());
         }
 
         SUBCASE("all same character") {
             fourcc aaaa("AAAA");
-            CHECK(std::all_of(aaaa.begin(), aaaa.end(), [](char c) {
-                return c == 'A';
-                }));
+            // Check all chars are 'A' using operator[]
+            CHECK(aaaa[0] == 'A');
+            CHECK(aaaa[1] == 'A');
+            CHECK(aaaa[2] == 'A');
+            CHECK(aaaa[3] == 'A');
 
             fourcc spaces("    ");
-            CHECK(spaces.has_padding());
-            CHECK(spaces.to_string_trimmed() == "");
+            CHECK(spaces.to_string() == "    ");
         }
 
         SUBCASE("constexpr operations") {

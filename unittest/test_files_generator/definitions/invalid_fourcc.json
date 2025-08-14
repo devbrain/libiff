@@ -1,0 +1,27 @@
+{
+  "name": "invalid_fourcc",
+  "description": "Chunk with invalid FourCC characters",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "TEST",
+    "children": [
+      {
+        "id": "DATA",
+        "data": {
+          "type": "text",
+          "value": "Valid data"
+        }
+      }
+    ]
+  },
+  "corruptions": [
+    {
+      "type": "corrupt_bytes",
+      "offset": 12,
+      "length": 4,
+      "value": "00010203",
+      "comment": "Replace DATA fourcc with invalid bytes"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "zero_sized_container",
+  "description": "Container with zero size field",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "TEST",
+    "size_override": 0,
+    "children": []
+  }
+}

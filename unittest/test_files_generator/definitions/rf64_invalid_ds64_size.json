@@ -1,0 +1,26 @@
+{
+  "name": "rf64_invalid_ds64_size",
+  "description": "RF64 with ds64 chunk too small (less than 24 bytes)",
+  "format": "RF64",
+  "root": {
+    "id": "RF64",
+    "type": "WAVE",
+    "children": [
+      {
+        "id": "ds64",
+        "comment": "Invalid ds64 - only 16 bytes instead of minimum 24",
+        "data": {
+          "type": "bytes",
+          "value": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        }
+      },
+      {
+        "id": "fmt ",
+        "data": {
+          "type": "bytes",
+          "value": [1, 0, 2, 0, 128, 187, 0, 0, 0, 238, 2, 0, 4, 0, 16, 0]
+        }
+      }
+    ]
+  }
+}

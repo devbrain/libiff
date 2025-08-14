@@ -1,0 +1,35 @@
+{
+  "name": "rf64_odd_sized_chunks",
+  "description": "RF64 with odd-sized chunks to test padding",
+  "format": "RF64",
+  "root": {
+    "id": "RF64",
+    "type": "WAVE",
+    "children": [
+      {
+        "id": "ODD_",
+        "comment": "5 bytes - odd size requiring padding",
+        "data": {
+          "type": "text",
+          "value": "HELLO"
+        }
+      },
+      {
+        "id": "EVEN",
+        "comment": "4 bytes - even size, no padding",
+        "data": {
+          "type": "text",
+          "value": "TEST"
+        }
+      },
+      {
+        "id": "ODD2",
+        "comment": "7 bytes - odd size requiring padding",
+        "data": {
+          "type": "text",
+          "value": "TESTING"
+        }
+      }
+    ]
+  }
+}

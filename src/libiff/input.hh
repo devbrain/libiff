@@ -8,6 +8,8 @@
 #include <cstdint>
 #include <array>
 #include <memory>
+#include <vector>
+#include <cstring>
 
 #include <iff/exceptions.hh>
 #include <iff/byte_order.hh>
@@ -39,7 +41,6 @@ namespace iff {
 
             // Create a subreader from current position
             [[nodiscard]] std::unique_ptr <subreader> create_subreader(std::size_t size);
-            [[nodiscard]] static std::unique_ptr <subreader> create_subreader(std::istream& is);
 
             // Convenience methods
             std::vector<std::byte> read_exact(std::size_t size) {
@@ -88,7 +89,7 @@ namespace iff {
     // Subreader class - reads from a limited region
     class subreader : public reader_base {
         public:
-            subreader(reader_base* parent, std::uint64_t start, std::size_t size, bool release_parent);
+            subreader(reader_base* parent, std::uint64_t start, std::size_t size);
             ~subreader() override;
 
             subreader(const subreader&) = delete;
@@ -111,6 +112,5 @@ namespace iff {
             std::uint64_t m_start; // Absolute start position in parent
             std::size_t m_size; // Size of this region
             std::uint64_t m_position; // Current position relative to m_start
-            bool m_release_parent;
     };
 }

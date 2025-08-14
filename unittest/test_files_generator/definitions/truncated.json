@@ -1,5 +1,5 @@
 {
-  "name": "truncated_header",
+  "name": "truncated_in_chunk",
   "description": "File truncated in chunk header for error testing",
   "format": "IFF",
   "root": {

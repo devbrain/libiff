@@ -21,9 +21,7 @@ add_compile_options(
     $<$<CXX_COMPILER_ID:MSVC>:/W0>
 )
 
-add_subdirectory(failsafe)
 add_subdirectory(doctest)
-add_subdirectory(expected)
 
 # Restore original flags (though subdirectories won't inherit the change back)
 set(CMAKE_CXX_FLAGS ${SAVED_CMAKE_CXX_FLAGS})

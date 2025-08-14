@@ -10,21 +10,7 @@ namespace iff {
     // reader_base implementation
     std::unique_ptr<subreader> reader_base::create_subreader(std::size_t size) {
         std::uint64_t pos = tell();
-        return std::make_unique<subreader>(this, pos, size, false);
-    }
-
-    std::unique_ptr<subreader> reader_base::create_subreader(std::istream& is) {
-        auto start = is.tellg();
-        THROW_IO_IF(start == std::streampos(-1), "Failed to get stream position");
-        
-        is.seekg(0, std::ios::end);
-        auto end = is.tellg();
-        THROW_IO_IF(end == std::streampos(-1), "Failed to get stream end position");
-        
-        is.seekg(start, std::ios::beg);
-        auto size = end - start;
-        
-        return std::make_unique<subreader>(new reader(is), start, size, true);
+        return std::make_unique<subreader>(this, pos, size);
     }
 
     fourcc reader_base::read_fourcc() {
@@ -120,14 +106,10 @@ namespace iff {
     }
 
     // subreader implementation
-    subreader::subreader(reader_base* parent, std::uint64_t start, std::size_t size, bool release_parent)
-        : m_parent(parent), m_start(start), m_size(size), m_position(0), m_release_parent(release_parent) {}
+    subreader::subreader(reader_base* parent, std::uint64_t start, std::size_t size)
+        : m_parent(parent), m_start(start), m_size(size), m_position(0) {}
 
-    subreader::~subreader() {
-        if (m_release_parent) {
-            delete m_parent;
-        }
-    }
+    subreader::~subreader() = default;
 
     std::size_t subreader::read(void* dst, std::size_t size) {
         THROW_IO_UNLESS(dst, "Null buffer in subreader::read");

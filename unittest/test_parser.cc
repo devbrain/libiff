@@ -8,7 +8,6 @@
 
 #include "unittest_config.h"
 #include <iff/parser.hh>
-#include "../src/libiff/input.hh"
 
 static std::unique_ptr<std::istream> load_test(const std::string& name) {
     static std::filesystem::path root(UNITTEST_PATH_TO_GENERATED_FILES);

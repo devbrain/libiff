@@ -1,0 +1,26 @@
+{
+  "name": "reading_boundaries_test",
+  "description": "File for testing chunk boundary reading",
+  "format": "RIFF",
+  "root": {
+    "id": "RIFF",
+    "type": "WAVE",
+    "children": [
+      {
+        "id": "fmt ",
+        "data": {
+          "type": "hex",
+          "value": "01 00 02 00 44 AC 00 00 10 B1 02 00 04 00 10 00"
+        }
+      },
+      {
+        "id": "data",
+        "data": {
+          "type": "pattern",
+          "value": "DE AD BE EF",
+          "repeat": 25
+        }
+      }
+    ]
+  }
+}

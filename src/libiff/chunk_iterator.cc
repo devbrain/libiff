@@ -39,8 +39,8 @@ namespace iff {
         if (id == "FORM"_4cc || id == "LIST"_4cc || id == "CAT "_4cc) {
             // IFF-85 format
             return std::make_unique<iff85_chunk_iterator>(stream, options);
-        } else if (id == "RIFF"_4cc || id == "RF64"_4cc || id == "RIFX"_4cc) {
-            // RIFF format
+        } else if (id == "RIFF"_4cc || id == "RF64"_4cc || id == "RIFX"_4cc || id == "BW64"_4cc) {
+            // RIFF format (including RF64 and BW64 variants)
             return std::make_unique<riff_chunk_iterator>(stream, options);
         } else {
             THROW_PARSE("Unknown file format: " + id.to_string());

@@ -1,6 +1,6 @@
 {
-  "name": "rf64_basic",
-  "description": "Basic RF64 file with ds64 chunk",
+  "name": "rf64_invalid_ds64",
+  "description": "RF64 with invalid ds64 chunk size",
   "format": "RF64",
   "root": {
     "id": "RF64",
@@ -9,11 +9,12 @@
     "children": [
       {
         "id": "ds64",
+        "size_override": 20,
         "data": {
           "type": "ds64",
-          "riff_size": 1100,
-          "data_size": 1000,
-          "sample_count": 500,
+          "riff_size": 100,
+          "data_size": 50,
+          "sample_count": 25,
           "table": []
         }
       },
@@ -22,14 +23,6 @@
         "data": {
           "type": "hex",
           "value": "01 00 02 00 44 AC 00 00 10 B1 02 00 04 00 10 00"
-        }
-      },
-      {
-        "id": "data",
-        "size_marker": "MAX_U32",
-        "data": {
-          "type": "zeros",
-          "size": 1000
         }
       }
     ]
