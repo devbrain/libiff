@@ -1,0 +1,23 @@
+#ifndef LIBIFF__CONFIG_H
+#define LIBIFF__CONFIG_H
+
+// Endianness configuration
+#cmakedefine IS_BIG_ENDIAN
+
+#ifdef IS_BIG_ENDIAN
+    #define LIBIFF_BIG_ENDIAN 1
+    #define LIBIFF_LITTLE_ENDIAN 0
+#else
+    #define LIBIFF_BIG_ENDIAN 0
+    #define LIBIFF_LITTLE_ENDIAN 1
+#endif
+
+// Platform detection
+#cmakedefine CMAKE_SYSTEM_NAME "@CMAKE_SYSTEM_NAME@"
+
+// Version information (if needed in future)
+#cmakedefine LIBIFF__VERSION_MAJOR @LIBIFF__VERSION_MAJOR@
+#cmakedefine LIBIFF__VERSION_MINOR @LIBIFF__VERSION_MINOR@
+#cmakedefine LIBIFF__VERSION_PATCH @LIBIFF__VERSION_PATCH@
+
+#endif // LIBIFF__CONFIG_H

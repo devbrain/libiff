@@ -1,0 +1,97 @@
+{
+  "name": "complex_prop_list",
+  "description": "Test complex PROP handling with multiple FORMs that should inherit defaults",
+  "format": "IFF",
+  "root": {
+    "id": "LIST",
+    "type": "8SVX",
+    "children": [
+      {
+        "id": "PROP",
+        "type": "8SVX",
+        "children": [
+          {
+            "id": "VHDR",
+            "data": {
+              "type": "hex",
+              "value": "0000AC44 00000000 00000020 0001 00 00"
+            },
+            "comment": "Voice header with sample rate"
+          },
+          {
+            "id": "CHAN",
+            "data": {
+              "type": "hex",
+              "value": "00000002"
+            },
+            "comment": "Channel info - stereo"
+          }
+        ]
+      },
+      {
+        "id": "FORM",
+        "type": "8SVX",
+        "children": [
+          {
+            "id": "NAME",
+            "data": "Sound1"
+          },
+          {
+            "id": "BODY",
+            "data": {
+              "type": "pattern",
+              "value": "80",
+              "repeat": 16
+            },
+            "comment": "Should inherit VHDR and CHAN from PROP"
+          }
+        ]
+      },
+      {
+        "id": "FORM",
+        "type": "8SVX",
+        "children": [
+          {
+            "id": "NAME",
+            "data": "Sound2"
+          },
+          {
+            "id": "VHDR",
+            "data": {
+              "type": "hex",
+              "value": "00005622 00000000 00000010 0001 00 00"
+            },
+            "comment": "Override VHDR from PROP"
+          },
+          {
+            "id": "BODY",
+            "data": {
+              "type": "pattern",
+              "value": "7F",
+              "repeat": 16
+            }
+          }
+        ]
+      },
+      {
+        "id": "FORM",
+        "type": "8SVX",
+        "children": [
+          {
+            "id": "NAME",
+            "data": "Sound3"
+          },
+          {
+            "id": "BODY",
+            "data": {
+              "type": "pattern",
+              "value": "00",
+              "repeat": 16
+            },
+            "comment": "Should inherit original VHDR and CHAN from PROP"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "rf64_basic",
+  "description": "RF64 file with ds64 chunk (small file demonstrating RF64 structure)",
+  "format": "RF64",
+  "root": {
+    "id": "RF64",
+    "type": "WAVE",
+    "size_marker": "MAX_U32",
+    "children": [
+      {
+        "id": "ds64",
+        "comment": "64-bit size overrides (required for RF64, even for small files)",
+        "data": {
+          "type": "ds64",
+          "riff_size": 1072,
+          "data_size": 1000,
+          "sample_count": 250,
+          "table": []
+        }
+      },
+      {
+        "id": "fmt ",
+        "data": {
+          "type": "hex",
+          "value": "0100 0200 44AC0000 10B10200 0400 1000",
+          "comment": "PCM, 2ch, 44100Hz, 16-bit"
+        }
+      },
+      {
+        "id": "data",
+        "size_marker": "MAX_U32",
+        "comment": "Data chunk with size 0xFFFFFFFF (actual size in ds64)",
+        "data": {
+          "type": "zeros",
+          "size": 1000,
+          "comment": "1000 bytes of audio data"
+        }
+      }
+    ]
+  }
+}

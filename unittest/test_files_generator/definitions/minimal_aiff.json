@@ -1,0 +1,29 @@
+{
+  "name": "minimal_aiff",
+  "description": "Minimal valid AIFF file with COMM and SSND chunks",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "AIFF",
+    "children": [
+      {
+        "id": "COMM",
+        "comment": "Common chunk with audio format info",
+        "data": {
+          "type": "hex",
+          "value": "0002" ,
+          "comment": "2 channels, 44100 Hz, 16 bits"
+        }
+      },
+      {
+        "id": "SSND",
+        "comment": "Sound data chunk",
+        "data": {
+          "type": "hex",
+          "value": "00000000 00000000",
+          "comment": "offset=0, blocksize=0, followed by audio samples"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "many_small_chunks",
+  "description": "Test file with many small chunks for performance testing",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "MANY",
+    "children": [
+      {"id": "CH01", "data": {"type": "hex", "value": "41"}},
+      {"id": "CH02", "data": {"type": "hex", "value": "4242"}},
+      {"id": "CH03", "data": {"type": "hex", "value": "434343"}},
+      {"id": "CH04", "data": {"type": "hex", "value": "44444444"}},
+      {"id": "CH05", "data": {"type": "hex", "value": "4545454545"}},
+      {"id": "CH06", "data": {"type": "hex", "value": "4646"}},
+      {"id": "CH07", "data": {"type": "hex", "value": "47"}},
+      {"id": "CH08", "data": {"type": "hex", "value": "4848"}},
+      {"id": "CH09", "data": {"type": "hex", "value": "494949"}},
+      {"id": "CH10", "data": {"type": "hex", "value": "4A4A4A4A"}},
+      {"id": "CH11", "data": {"type": "hex", "value": "4B"}},
+      {"id": "CH12", "data": {"type": "hex", "value": "4C4C"}},
+      {"id": "CH13", "data": {"type": "hex", "value": "4D4D4D"}},
+      {"id": "CH14", "data": {"type": "hex", "value": "4E4E4E4E"}},
+      {"id": "CH15", "data": {"type": "hex", "value": "4F4F4F4F4F"}},
+      {"id": "CH16", "data": {"type": "hex", "value": "5050"}},
+      {"id": "CH17", "data": {"type": "hex", "value": "51"}},
+      {"id": "CH18", "data": {"type": "hex", "value": "5252"}},
+      {"id": "CH19", "data": {"type": "hex", "value": "535353"}},
+      {"id": "CH20", "data": {"type": "hex", "value": "54545454"}}
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "truncated_header",
+  "description": "File truncated in chunk header for error testing",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "TEST",
+    "children": [
+      {
+        "id": "DATA",
+        "data": {
+          "type": "text",
+          "value": "Complete chunk"
+        }
+      },
+      {
+        "id": "TRUNC",
+        "comment": "This chunk will be truncated"
+      }
+    ]
+  },
+  "corruptions": [
+    {
+      "type": "truncate_at",
+      "offset": -6,
+      "comment": "Truncate 6 bytes before end, in middle of TRUNC header"
+    }
+  ]
+}

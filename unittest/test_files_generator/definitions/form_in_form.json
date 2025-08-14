@@ -1,0 +1,68 @@
+{
+  "name": "form_in_form",
+  "description": "Test FORM containing another FORM directly (composite FORM)",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "COMP",
+    "comment": "Composite FORM containing nested FORMs",
+    "children": [
+      {
+        "id": "NAME",
+        "data": {
+          "type": "text",
+          "value": "Composite"
+        }
+      },
+      {
+        "id": "FORM",
+        "type": "PIC1",
+        "comment": "Nested picture FORM",
+        "children": [
+          {
+            "id": "SIZE",
+            "data": {
+              "type": "hex",
+              "value": "0140 00C8"
+            }
+          },
+          {
+            "id": "DATA",
+            "data": {
+              "type": "text",
+              "value": "Picture data"
+            }
+          }
+        ]
+      },
+      {
+        "id": "FORM",
+        "type": "SND1",
+        "comment": "Nested sound FORM",
+        "children": [
+          {
+            "id": "RATE",
+            "data": {
+              "type": "hex",
+              "value": "AC44"
+            }
+          },
+          {
+            "id": "DATA",
+            "data": {
+              "type": "text",
+              "value": "Sound data"
+            }
+          }
+        ]
+      },
+      {
+        "id": "DESC",
+        "data": {
+          "type": "text",
+          "value": "End chunk"
+        }
+      }
+    ]
+  }
+}

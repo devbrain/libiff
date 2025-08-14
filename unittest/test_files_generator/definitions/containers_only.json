@@ -1,0 +1,32 @@
+{
+  "name": "containers_only",
+  "description": "Test file with only container chunks, no data chunks",
+  "format": "IFF",
+  "root": {
+    "id": "LIST",
+    "type": "CONT",
+    "children": [
+      {
+        "id": "FORM",
+        "type": "EMP1",
+        "children": []
+      },
+      {
+        "id": "LIST",
+        "type": "EMP2",
+        "children": [
+          {
+            "id": "FORM",
+            "type": "EMP3",
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "PROP",
+        "type": "EMP4",
+        "children": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "cat_container",
+  "description": "Test CAT container which concatenates FORMs without a type tag",
+  "format": "IFF",
+  "root": {
+    "id": "CAT ",
+    "comment": "CAT has no type tag, just concatenated content",
+    "children": [
+      {
+        "id": "FORM",
+        "type": "TST1",
+        "children": [
+          {
+            "id": "DAT1",
+            "data": "First form data"
+          }
+        ]
+      },
+      {
+        "id": "FORM",
+        "type": "TST2",
+        "children": [
+          {
+            "id": "DAT2",
+            "data": "Second form data"
+          }
+        ]
+      },
+      {
+        "id": "FORM",
+        "type": "TST3",
+        "children": [
+          {
+            "id": "DAT3",
+            "data": "Third form data"
+          }
+        ]
+      }
+    ]
+  }
+}

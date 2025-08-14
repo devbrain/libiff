@@ -1,0 +1,33 @@
+{
+  "name": "empty_containers",
+  "description": "Test handling of empty container chunks",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "TEST",
+    "children": [
+      {
+        "id": "DATA",
+        "data": "Before empty",
+        "comment": "Data before empty container"
+      },
+      {
+        "id": "FORM",
+        "type": "EMTY",
+        "children": [],
+        "comment": "Empty FORM container"
+      },
+      {
+        "id": "LIST",
+        "type": "VOID",
+        "children": [],
+        "comment": "Empty LIST container"
+      },
+      {
+        "id": "DATA",
+        "data": "After empty",
+        "comment": "Data after empty containers"
+      }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "name": "rf64_with_table",
+  "description": "RF64 file with ds64 chunk containing size override table",
+  "format": "RF64",
+  "root": {
+    "id": "RF64",
+    "type": "WAVE",
+    "size_marker": "MAX_U32",
+    "children": [
+      {
+        "id": "ds64",
+        "comment": "ds64 with additional chunk size overrides in table",
+        "data": {
+          "type": "ds64",
+          "riff_size": 256,
+          "data_size": 100,
+          "sample_count": 25,
+          "table": [
+            {
+              "chunk_id": "fact",
+              "chunk_size": 8
+            },
+            {
+              "chunk_id": "LIST",
+              "chunk_size": 64
+            }
+          ]
+        }
+      },
+      {
+        "id": "fmt ",
+        "data": {
+          "type": "hex",
+          "value": "0100 0200 44AC0000 10B10200 0400 1000",
+          "comment": "PCM format"
+        }
+      },
+      {
+        "id": "fact",
+        "size_marker": "MAX_U32",
+        "comment": "Fact chunk with size in ds64 table",
+        "data": {
+          "type": "hex",
+          "value": "19000000 00000000",
+          "comment": "Sample count"
+        }
+      },
+      {
+        "id": "data",
+        "size_marker": "MAX_U32",
+        "comment": "Data chunk",
+        "data": {
+          "type": "zeros",
+          "size": 100
+        }
+      }
+    ]
+  }
+}

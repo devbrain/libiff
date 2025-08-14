@@ -1,0 +1,67 @@
+{
+  "name": "deeply_nested",
+  "description": "Test maximum nesting depth handling",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "TST1",
+    "children": [
+      {
+        "id": "LIST",
+        "type": "TST2",
+        "children": [
+          {
+            "id": "FORM",
+            "type": "TST3",
+            "children": [
+              {
+                "id": "LIST",
+                "type": "TST4",
+                "children": [
+                  {
+                    "id": "FORM",
+                    "type": "TST5",
+                    "children": [
+                      {
+                        "id": "LIST",
+                        "type": "TST6",
+                        "children": [
+                          {
+                            "id": "FORM",
+                            "type": "TST7",
+                            "children": [
+                              {
+                                "id": "LIST",
+                                "type": "TST8",
+                                "children": [
+                                  {
+                                    "id": "FORM",
+                                    "type": "TST9",
+                                    "children": [
+                                      {
+                                        "id": "DATA",
+                                        "comment": "Deeply nested data at level 10",
+                                        "data": {
+                                          "type": "text",
+                                          "value": "DEEP"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

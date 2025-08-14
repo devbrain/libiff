@@ -1,0 +1,31 @@
+{
+  "name": "zero_sized_chunks",
+  "description": "Test handling of zero-sized chunks",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "TEST",
+    "children": [
+      {
+        "id": "ZERO",
+        "data": "",
+        "comment": "Zero-sized chunk"
+      },
+      {
+        "id": "DATA",
+        "data": "ABCD",
+        "comment": "Normal chunk after zero-sized"
+      },
+      {
+        "id": "NULL",
+        "data": "",
+        "comment": "Another zero-sized chunk"
+      },
+      {
+        "id": "MORE",
+        "data": "1234567890",
+        "comment": "Normal chunk with data"
+      }
+    ]
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "name": "alternating_sizes",
+  "description": "Test alternating odd and even sized chunks for padding verification",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "ALTR",
+    "children": [
+      {
+        "id": "ODD1",
+        "data": {
+          "type": "hex",
+          "value": "58"
+        },
+        "comment": "1 byte - odd (X)"
+      },
+      {
+        "id": "EVN2",
+        "data": {
+          "type": "hex",
+          "value": "5959"
+        },
+        "comment": "2 bytes - even (YY)"
+      },
+      {
+        "id": "ODD3",
+        "data": {
+          "type": "hex",
+          "value": "5A5A5A"
+        },
+        "comment": "3 bytes - odd (ZZZ)"
+      },
+      {
+        "id": "EVN4",
+        "data": {
+          "type": "hex",
+          "value": "41414141"
+        },
+        "comment": "4 bytes - even (AAAA)"
+      },
+      {
+        "id": "OD11",
+        "data": {
+          "type": "hex",
+          "value": "42424242424242424242 42"
+        },
+        "comment": "11 bytes - odd (BBBBBBBBBBB)"
+      },
+      {
+        "id": "EV12",
+        "data": {
+          "type": "hex",
+          "value": "434343434343434343434343"
+        },
+        "comment": "12 bytes - even (CCCCCCCCCCCC)"
+      },
+      {
+        "id": "OD99",
+        "data": {
+          "type": "pattern",
+          "value": "44",
+          "repeat": 99
+        },
+        "comment": "99 bytes - odd (D repeated)"
+      },
+      {
+        "id": "EV100",
+        "data": {
+          "type": "pattern",
+          "value": "45",
+          "repeat": 100
+        },
+        "comment": "100 bytes - even (E repeated)"
+      }
+    ]
+  }
+}

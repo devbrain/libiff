@@ -1,0 +1,28 @@
+{
+  "name": "minimal_wave",
+  "description": "Minimal valid WAVE file",
+  "format": "RIFF",
+  "root": {
+    "id": "RIFF",
+    "type": "WAVE",
+    "children": [
+      {
+        "id": "fmt ",
+        "comment": "Format chunk",
+        "data": {
+          "type": "hex",
+          "value": "0100 0200 44AC0000 10B10200 0400 1000",
+          "comment": "PCM, 2ch, 44100Hz, 176400 bytes/sec, 4 block align, 16 bits"
+        }
+      },
+      {
+        "id": "data",
+        "comment": "Audio data",
+        "data": {
+          "type": "zeros",
+          "size": 100
+        }
+      }
+    ]
+  }
+}

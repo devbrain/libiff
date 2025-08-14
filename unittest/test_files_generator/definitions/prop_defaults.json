@@ -1,0 +1,76 @@
+{
+  "name": "prop_defaults",
+  "description": "LIST with PROP defaults for testing IFF-85 PROP semantics",
+  "format": "IFF",
+  "root": {
+    "id": "LIST",
+    "type": "ILBM",
+    "children": [
+      {
+        "id": "PROP",
+        "type": "ILBM",
+        "comment": "Property defaults for all FORMs in this LIST",
+        "children": [
+          {
+            "id": "BMHD",
+            "comment": "Default bitmap header",
+            "data": {
+              "type": "hex",
+              "value": "0140 00C8 0000 0000 08 00 02 01 0000 0A0B 0140 00C8",
+              "comment": "320x200, 8 planes, masking=2, compression=1"
+            }
+          },
+          {
+            "id": "CMAP",
+            "comment": "Default color map",
+            "data": {
+              "type": "hex",
+              "value": "000000 FFFFFF FF0000 00FF00 0000FF",
+              "comment": "Black, White, Red, Green, Blue"
+            }
+          }
+        ]
+      },
+      {
+        "id": "FORM",
+        "type": "ILBM",
+        "comment": "First FORM inherits PROP defaults",
+        "children": [
+          {
+            "id": "BODY",
+            "comment": "Image data",
+            "data": {
+              "type": "pattern",
+              "value": "AA55",
+              "repeat": 50
+            }
+          }
+        ]
+      },
+      {
+        "id": "FORM",
+        "type": "ILBM",
+        "comment": "Second FORM overrides CMAP",
+        "children": [
+          {
+            "id": "CMAP",
+            "comment": "Override default color map",
+            "data": {
+              "type": "hex",
+              "value": "FFFFFF 000000",
+              "comment": "White, Black (inverted)"
+            }
+          },
+          {
+            "id": "BODY",
+            "data": {
+              "type": "pattern",
+              "value": "55AA",
+              "repeat": 50
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

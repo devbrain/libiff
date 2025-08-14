@@ -1,0 +1,86 @@
+{
+  "name": "deeply_nested_correct",
+  "description": "Correctly nested IFF structure with matching types",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "TEST",
+    "comment": "Root FORM can contain other containers",
+    "children": [
+      {
+        "id": "LIST",
+        "type": "TEST",
+        "comment": "LIST TEST should contain FORM TEST",
+        "children": [
+          {
+            "id": "FORM",
+            "type": "TEST",
+            "comment": "FORM TEST matches LIST TEST type",
+            "children": [
+              {
+                "id": "DATA",
+                "data": "Level 3"
+              },
+              {
+                "id": "LIST",
+                "type": "SUB1",
+                "comment": "Nested LIST with different type",
+                "children": [
+                  {
+                    "id": "FORM",
+                    "type": "SUB1",
+                    "comment": "FORM SUB1 matches LIST SUB1",
+                    "children": [
+                      {
+                        "id": "INFO",
+                        "data": "Nested"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "FORM",
+            "type": "TEST",
+            "comment": "Another FORM TEST in LIST TEST",
+            "children": [
+              {
+                "id": "DATA",
+                "data": "Sibling"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "CAT ",
+        "type": "TEST",
+        "comment": "CAT TEST should contain FORM TEST",
+        "children": [
+          {
+            "id": "FORM",
+            "type": "TEST",
+            "children": [
+              {
+                "id": "DATA",
+                "data": "CAT child 1"
+              }
+            ]
+          },
+          {
+            "id": "FORM",
+            "type": "TEST",
+            "children": [
+              {
+                "id": "DATA",
+                "data": "CAT child 2"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

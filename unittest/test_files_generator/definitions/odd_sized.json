@@ -1,0 +1,54 @@
+{
+  "name": "odd_sized_chunks",
+  "description": "Test padding byte handling for odd-sized chunks",
+  "format": "IFF",
+  "root": {
+    "id": "FORM",
+    "type": "TEST",
+    "children": [
+      {
+        "id": "ODD1",
+        "comment": "1-byte chunk, needs padding",
+        "data": {
+          "type": "hex",
+          "value": "FF"
+        },
+        "align": true
+      },
+      {
+        "id": "EVN2",
+        "comment": "2-byte chunk, no padding needed",
+        "data": {
+          "type": "hex",
+          "value": "AABB"
+        }
+      },
+      {
+        "id": "ODD3",
+        "comment": "3-byte chunk, needs padding",
+        "data": {
+          "type": "text",
+          "value": "ABC"
+        },
+        "align": true
+      },
+      {
+        "id": "ODD5",
+        "comment": "5-byte chunk, needs padding",
+        "data": {
+          "type": "hex",
+          "value": "0102030405"
+        },
+        "align": true
+      },
+      {
+        "id": "EVN4",
+        "comment": "4-byte chunk, no padding",
+        "data": {
+          "type": "text",
+          "value": "EVEN"
+        }
+      }
+    ]
+  }
+}
