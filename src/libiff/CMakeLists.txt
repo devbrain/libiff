@@ -42,8 +42,9 @@ target_link_libraries(iff
         PUBLIC )
 target_include_directories(iff
         PUBLIC
-        ${LIBIFF_PROJECT_ROOT}/include/
-        ${CMAKE_CURRENT_BINARY_DIR}
+        $<BUILD_INTERFACE:${LIBIFF_PROJECT_ROOT}/include/>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         PRIVATE
         ${CMAKE_BINARY_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}
@@ -67,4 +68,25 @@ set(export_file_name "export_iff.h")
 
 generate_export_header(iff
     EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/iff/${export_file_name}
+)
+
+# Set library properties
+set_target_properties(iff PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+)
+
+# Install the library
+install(TARGETS iff
+    EXPORT libiffTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+# Install generated headers
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/iff/export_iff.h
+    ${CMAKE_CURRENT_BINARY_DIR}/iff/iff_config.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/iff
 )

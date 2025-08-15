@@ -1,0 +1,16 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+# Find dependencies if any
+# find_dependency(SomePackage)
+
+# Include the targets file
+include("${CMAKE_CURRENT_LIST_DIR}/libiffTargets.cmake")
+
+# Check that all required components are found
+check_required_components(libiff)
+
+# Provide the include directory variable for compatibility
+set(libiff_INCLUDE_DIRS "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
+set(libiff_LIBRARIES iff::iff)

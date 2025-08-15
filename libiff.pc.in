@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+
+Name: libiff
+Description: Modern C++ library for parsing IFF and RIFF files
+Version: @PROJECT_VERSION@
+Libs: -L${libdir} -liff
+Cflags: -I${includedir}
