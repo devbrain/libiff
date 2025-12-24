@@ -147,18 +147,6 @@ if(NEUTRINO_LIBIFF_INSTALL)
         ${CMAKE_CURRENT_BINARY_DIR}/iffConfigVersion.cmake
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/iff
     )
-
-    # Generate and install pkg-config file
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/libiff.pc.in
-        ${CMAKE_CURRENT_BINARY_DIR}/libiff.pc
-        @ONLY
-    )
-
-    install(FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/libiff.pc
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-    )
 endif()
 
 # ============================================================================
