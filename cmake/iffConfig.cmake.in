@@ -1,0 +1,9 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+# No external dependencies required
+
+include("${CMAKE_CURRENT_LIST_DIR}/iffTargets.cmake")
+
+check_required_components(iff)

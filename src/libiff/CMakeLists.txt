@@ -1,92 +1,116 @@
-if (LIBIFF_BUILD_FPIC)
-    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-endif()
+# =============================================================================
+# libiff library target
+# =============================================================================
 
-if (LIBIFF_BUILD_SHARED)
-    set(LIB_BUILD_TYPE SHARED)
+# Determine library type based on option
+if(NEUTRINO_LIBIFF_BUILD_SHARED)
+    set(_libiff_lib_type SHARED)
 else()
-    set(LIB_BUILD_TYPE STATIC)
+    set(_libiff_lib_type STATIC)
 endif()
 
-
-add_library(iff ${LIB_BUILD_TYPE}
-        parser.cc
-        handler_registry.cc
-        chunk_reader.cc
-        input.cc
-        input.hh
-        iff85_chunk_reader.cc
-        iff85_chunk_reader.hh
-        riff_chunk_reader.cc
-        riff_chunk_reader.hh
-        chunk_iterator.cc
-        iff85_chunk_iterator.cc
-        iff85_chunk_iterator.hh
-        riff_chunk_iterator.cc
-        riff_chunk_iterator.hh
-        ${LIBIFF_PROJECT_ROOT}/include/iff/compiler.hh
-        ${LIBIFF_PROJECT_ROOT}/include/iff/endian.hh
-        ${LIBIFF_PROJECT_ROOT}/include/iff/fourcc.hh
-        ${LIBIFF_PROJECT_ROOT}/include/iff/parser.hh
-        ${LIBIFF_PROJECT_ROOT}/include/iff/byte_order.hh
-        ${LIBIFF_PROJECT_ROOT}/include/iff/exceptions.hh
-        ${LIBIFF_PROJECT_ROOT}/include/iff/chunk_iterator.hh
-        ${LIBIFF_PROJECT_ROOT}/include/iff/chunk_reader.hh
-        ${LIBIFF_PROJECT_ROOT}/include/iff/chunk_header.hh
-        ${LIBIFF_PROJECT_ROOT}/include/iff/handler_registry.hh
-        ${LIBIFF_PROJECT_ROOT}/include/iff/parse_options.hh
-
+# Source files
+set(LIBIFF_SOURCES
+    parser.cc
+    handler_registry.cc
+    chunk_reader.cc
+    input.cc
+    iff85_chunk_reader.cc
+    riff_chunk_reader.cc
+    chunk_iterator.cc
+    iff85_chunk_iterator.cc
+    riff_chunk_iterator.cc
 )
 
-target_link_libraries(iff
-        PUBLIC )
+# Private headers
+set(LIBIFF_PRIVATE_HEADERS
+    input.hh
+    iff85_chunk_reader.hh
+    riff_chunk_reader.hh
+    iff85_chunk_iterator.hh
+    riff_chunk_iterator.hh
+)
+
+# Public headers
+set(LIBIFF_PUBLIC_HEADERS
+    ${PROJECT_SOURCE_DIR}/include/iff/compiler.hh
+    ${PROJECT_SOURCE_DIR}/include/iff/endian.hh
+    ${PROJECT_SOURCE_DIR}/include/iff/fourcc.hh
+    ${PROJECT_SOURCE_DIR}/include/iff/parser.hh
+    ${PROJECT_SOURCE_DIR}/include/iff/byte_order.hh
+    ${PROJECT_SOURCE_DIR}/include/iff/exceptions.hh
+    ${PROJECT_SOURCE_DIR}/include/iff/chunk_iterator.hh
+    ${PROJECT_SOURCE_DIR}/include/iff/chunk_reader.hh
+    ${PROJECT_SOURCE_DIR}/include/iff/chunk_header.hh
+    ${PROJECT_SOURCE_DIR}/include/iff/handler_registry.hh
+    ${PROJECT_SOURCE_DIR}/include/iff/parse_options.hh
+)
+
+# Create library
+add_library(iff ${_libiff_lib_type}
+    ${LIBIFF_SOURCES}
+    ${LIBIFF_PRIVATE_HEADERS}
+    ${LIBIFF_PUBLIC_HEADERS}
+)
+
+# Create neutrino:: alias
+add_library(neutrino::iff ALIAS iff)
+
+# C++ standard
+target_compile_features(iff PUBLIC cxx_std_17)
+
+# Include directories
 target_include_directories(iff
-        PUBLIC
-        $<BUILD_INTERFACE:${LIBIFF_PROJECT_ROOT}/include/>
+    PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-        PRIVATE
-        ${CMAKE_BINARY_DIR}
+    PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
-
 )
+
+# =============================================================================
+# Configuration header
+# =============================================================================
+
 include(TestBigEndian)
 test_big_endian(IS_BIG_ENDIAN)
 
-# Generate configuration header
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/iff_config.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/iff/iff_config.h
 )
 
+# =============================================================================
+# Export header
+# =============================================================================
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 
 include(GenerateExportHeader)
-set(export_file_name "export_iff.h")
-
 generate_export_header(iff
-    EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/iff/${export_file_name}
+    EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/iff/export_iff.h
 )
 
-# Set library properties
+# =============================================================================
+# Library properties
+# =============================================================================
+
 set_target_properties(iff PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
+    POSITION_INDEPENDENT_CODE ON
+    FOLDER "Libraries"
 )
 
-# Install the library
-install(TARGETS iff
-    EXPORT libiffTargets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
+# =============================================================================
+# Developer mode warnings
+# =============================================================================
 
-# Install generated headers
-install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/iff/export_iff.h
-    ${CMAKE_CURRENT_BINARY_DIR}/iff/iff_config.h
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/iff
-)
+neutrino_is_top_level(_libiff_is_top_level)
+if(_libiff_is_top_level AND NEUTRINO_LIBIFF_DEVELOPER_MODE)
+    if(TARGET neutrino::warnings)
+        target_link_libraries(iff PRIVATE neutrino::warnings)
+    endif()
+endif()

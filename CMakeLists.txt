@@ -1,198 +1,173 @@
 cmake_minimum_required(VERSION 3.20)
-project(libiff 
+
+project(libiff
     VERSION 1.0.0
     DESCRIPTION "Modern C++ library for parsing IFF and RIFF files"
-    LANGUAGES CXX)
+    LANGUAGES CXX
+)
 
-set(CMAKE_CXX_STANDARD 17)
+# ============================================================================
+# Neutrino CMake Integration
+# ============================================================================
 
-# Include GNUInstallDirs for standard install directories
-include(GNUInstallDirs)
+include(FetchContent)
 
-# Build options
-option(LIBIFF_BUILD_SHARED "Build LIBIFF as a shared library" ON)
-option(LIBIFF_BUILD_FPIC "Build LIBIFF with position independent code (for static builds)" OFF)
-option(LIBIFF_BUILD_DOCUMENTATION "Build documentation using Doxygen" OFF)
-option(LIBIFF_BUILD_EXAMPLES "Build example programs" OFF)
-option(LIBIFF_BUILD_TESTS "Build unittest" OFF)
+# Fetch neutrino-cmake if not already available
+if(NOT DEFINED NEUTRINO_CMAKE_DIR)
+    FetchContent_Declare(neutrino_cmake
+        GIT_REPOSITORY https://github.com/devbrain/neutrino-cmake.git
+        GIT_TAG master
+        GIT_SHALLOW TRUE
+    )
+    FetchContent_MakeAvailable(neutrino_cmake)
+    set(NEUTRINO_CMAKE_DIR "${neutrino_cmake_SOURCE_DIR}/cmake")
+    list(APPEND CMAKE_MODULE_PATH "${NEUTRINO_CMAKE_DIR}")
+endif()
 
+include(NeutrinoInit)
 
-# Output binary to predictable location.
-set(BINARY_OUT_DIR ${CMAKE_BINARY_DIR}/bin)
-set(LIB_OUT_DIR ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BINARY_OUT_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BINARY_OUT_DIR})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIB_OUT_DIR})
+# ============================================================================
+# Build Options (using standardized naming)
+# ============================================================================
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${BINARY_OUT_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${BINARY_OUT_DIR})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${LIB_OUT_DIR})
+neutrino_define_library_options(libiff)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${BINARY_OUT_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${BINARY_OUT_DIR})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${LIB_OUT_DIR})
-# ===========================================================================
-set (LIBIFF_PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+# ============================================================================
+# Dependencies
+# ============================================================================
 
-add_subdirectory(ext)
+# No external dependencies for core library
+# Tests use doctest (fetched when building tests)
+
+# ============================================================================
+# Library Target
+# ============================================================================
+
 add_subdirectory(src/libiff)
 
-if (LIBIFF_BUILD_TESTS)
-    add_subdirectory(unittest)
-endif ()
+# ============================================================================
+# Testing
+# ============================================================================
 
+if(NEUTRINO_LIBIFF_BUILD_TESTS)
+    find_package(Python3 COMPONENTS Interpreter REQUIRED)
+
+    include(${NEUTRINO_CMAKE_DIR}/deps/doctest.cmake)
+    neutrino_fetch_doctest()
+
+    enable_testing()
+    add_subdirectory(test)
+endif()
+
+# ============================================================================
 # Examples
-if(LIBIFF_BUILD_EXAMPLES)
+# ============================================================================
+
+if(NEUTRINO_LIBIFF_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
+# ============================================================================
 # Documentation
-if(LIBIFF_BUILD_DOCUMENTATION)
+# ============================================================================
+
+if(NEUTRINO_LIBIFF_BUILD_DOCS)
     find_package(Doxygen)
     if(DOXYGEN_FOUND)
-        # Set input and output files
         set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
         set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
-        # Configure the file
         configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
-        message("Doxygen build started")
 
-        # Add custom target for documentation
         add_custom_target(doc
             COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             COMMENT "Generating API documentation with Doxygen"
             VERBATIM
         )
-
-        # Optionally make documentation build with 'make all'
-        # add_custom_target(doc ALL ...)
     else()
-        message("Doxygen need to be installed to generate the documentation")
+        message(WARNING "Doxygen not found, documentation will not be built")
     endif()
 endif()
 
-# ===========================================================================
-# Installation and Packaging
-# ===========================================================================
+# ============================================================================
+# Installation
+# ============================================================================
 
-# Install headers
-install(DIRECTORY include/iff
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    FILES_MATCHING PATTERN "*.hh" PATTERN "*.h"
-)
+if(NEUTRINO_LIBIFF_INSTALL)
+    include(GNUInstallDirs)
+    include(CMakePackageConfigHelpers)
 
-# Create and install CMake package configuration
-include(CMakePackageConfigHelpers)
+    # Install public headers
+    install(DIRECTORY include/iff
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FILES_MATCHING PATTERN "*.hh" PATTERN "*.h"
+    )
 
-# Generate the config file
-configure_package_config_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/libiffConfig.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/libiffConfig.cmake
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libiff
-    PATH_VARS CMAKE_INSTALL_INCLUDEDIR
-)
+    # Install generated headers
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/iff/export_iff.h
+        ${CMAKE_CURRENT_BINARY_DIR}/iff/iff_config.h
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/iff
+    )
 
-# Generate the version file
-write_basic_package_version_file(
-    ${CMAKE_CURRENT_BINARY_DIR}/libiffConfigVersion.cmake
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion
-)
+    # Install target
+    install(TARGETS iff
+        EXPORT iffTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
 
-# Install the config and version files
-install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/libiffConfig.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/libiffConfigVersion.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libiff
-)
+    # Install export
+    install(EXPORT iffTargets
+        FILE iffTargets.cmake
+        NAMESPACE neutrino::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/iff
+    )
 
-# Export targets
-install(EXPORT libiffTargets
-    FILE libiffTargets.cmake
-    NAMESPACE iff::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libiff
-)
+    # Generate and install config file
+    configure_package_config_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/iffConfig.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/iffConfig.cmake
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/iff
+    )
 
-# Generate and install pkg-config file
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/libiff.pc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/libiff.pc
-    @ONLY
-)
+    # Generate version file
+    write_basic_package_version_file(
+        ${CMAKE_CURRENT_BINARY_DIR}/iffConfigVersion.cmake
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion
+    )
 
-install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/libiff.pc
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-)
+    # Install config files
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/iffConfig.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/iffConfigVersion.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/iff
+    )
 
-# ===========================================================================
-# CPack Configuration
-# ===========================================================================
+    # Generate and install pkg-config file
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/libiff.pc.in
+        ${CMAKE_CURRENT_BINARY_DIR}/libiff.pc
+        @ONLY
+    )
 
-set(CPACK_PACKAGE_NAME "libiff")
-set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
-set(CPACK_PACKAGE_VENDOR "libiff")
-set(CPACK_PACKAGE_CONTACT "your.email@example.com")
-
-# Source package
-set(CPACK_SOURCE_GENERATOR "TGZ")
-set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
-set(CPACK_SOURCE_IGNORE_FILES
-    "/build/"
-    "/.git/"
-    "/.idea/"
-    "/.vscode/"
-    "/cmake-build-.*/"
-    ".*~$"
-)
-
-# Binary packages
-if(WIN32)
-    set(CPACK_GENERATOR "ZIP")
-elseif(APPLE)
-    set(CPACK_GENERATOR "TGZ")
-else()
-    set(CPACK_GENERATOR "TGZ;DEB;RPM")
-    
-    # DEB specific
-    set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${CPACK_PACKAGE_CONTACT})
-    set(CPACK_DEBIAN_PACKAGE_SECTION "libs")
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.27), libstdc++6 (>= 7)")
-    
-    # RPM specific
-    set(CPACK_RPM_PACKAGE_LICENSE "MIT")
-    set(CPACK_RPM_PACKAGE_GROUP "Development/Libraries")
-    set(CPACK_RPM_PACKAGE_REQUIRES "glibc >= 2.27")
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/libiff.pc
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+    )
 endif()
 
-include(CPack)
+# ============================================================================
+# Summary
+# ============================================================================
 
-# ===========================================================================
-# Build Configuration Summary
-# ===========================================================================
-
-message(STATUS "")
-message(STATUS "========================================")
-message(STATUS "libiff ${PROJECT_VERSION} Build Configuration:")
-message(STATUS "========================================")
-message(STATUS "  C++ Standard:           ${CMAKE_CXX_STANDARD}")
-message(STATUS "  Build Type:             ${CMAKE_BUILD_TYPE}")
-message(STATUS "  Install Prefix:         ${CMAKE_INSTALL_PREFIX}")
-message(STATUS "")
-message(STATUS "Build Options:")
-message(STATUS "  Shared Library:         ${LIBIFF_BUILD_SHARED}")
-message(STATUS "  Position Independent:   ${LIBIFF_BUILD_FPIC}")
-message(STATUS "  Documentation:          ${LIBIFF_BUILD_DOCUMENTATION}")
-message(STATUS "  Examples:               ${LIBIFF_BUILD_EXAMPLES}")
-message(STATUS "  Tests:                  ${LIBIFF_BUILD_TESTS}")
-message(STATUS "")
-message(STATUS "Output Directories:")
-message(STATUS "  Runtime:                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-message(STATUS "  Library:                ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
-message(STATUS "  Archive:                ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
-message(STATUS "========================================")
-message(STATUS "")
-
+neutrino_is_top_level(_libiff_is_top_level)
+if(_libiff_is_top_level)
+    neutrino_print_options(libiff)
+    message(STATUS "  Shared library: ${NEUTRINO_LIBIFF_BUILD_SHARED}")
+    message(STATUS "")
+endif()
