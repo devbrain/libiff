@@ -260,8 +260,9 @@ TEST_CASE("RIFF iterator - LIST chunks") {
     
     CHECK(found_list);
     CHECK(found_isft);
-    
+
     // Clean up temp file
+    is.close();
     std::filesystem::remove(temp_file);
 }
 
@@ -311,7 +312,8 @@ TEST_CASE("RIFF iterator - padding handling") {
     CHECK(chunks[0].second == 3);
     CHECK(chunks[1].first == "EVEN");
     CHECK(chunks[1].second == 4);
-    
+
+    is.close();
     std::filesystem::remove(temp_file);
 }
 
@@ -368,7 +370,8 @@ TEST_CASE("RIFF iterator - RIFX big-endian format") {
     CHECK(chunks[0].second == 4);  // Should be 4, not 0x04000000
     CHECK(chunks[1].first == "PAD ");
     CHECK(chunks[1].second == 8);  // Should be 8, not 0x08000000
-    
+
+    is.close();
     std::filesystem::remove(temp_file);
 }
 
@@ -388,10 +391,11 @@ TEST_CASE("RIFF iterator - error handling") {
         
         std::ifstream is(temp_file, std::ios::binary);
         CHECK_THROWS_AS(chunk_iterator::get_iterator(is), parse_error);
-        
+
+        is.close();
         std::filesystem::remove(temp_file);
     }
-    
+
     SUBCASE("truncated RIFF file") {
         // Create a truncated RIFF file
         std::vector<std::byte> truncated = {
@@ -418,7 +422,8 @@ TEST_CASE("RIFF iterator - error handling") {
         // But advancing should eventually fail or end
         it->next();
         CHECK(!it->has_next());  // No more chunks due to truncation
-        
+
+        is.close();
         std::filesystem::remove(temp_file);
     }
 }

@@ -177,13 +177,11 @@ namespace iff {
             }
             
             // Create chunk header
-            m_current.header = {
-                .id = chunk_id,
-                .size = chunk_size,
-                .file_offset = start_pos,
-                .is_container = (chunk_id == RIFF || chunk_id == RIFX || chunk_id == RF64 || chunk_id == BW64 || chunk_id == LIST),
-                .type = std::nullopt,
-            };
+            m_current.header.id = chunk_id;
+            m_current.header.size = chunk_size;
+            m_current.header.file_offset = start_pos;
+            m_current.header.is_container = (chunk_id == RIFF || chunk_id == RIFX || chunk_id == RF64 || chunk_id == BW64 || chunk_id == LIST);
+            m_current.header.type = std::nullopt;
             
             // Update depth and context
             m_current.depth = m_container_stack.empty() ? 0 : m_container_stack.top().depth + 1;

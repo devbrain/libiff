@@ -108,13 +108,11 @@ namespace iff {
             }
             
             // Create chunk header
-            m_current.header = {
-                .id = chunk_id,
-                .size = chunk_size,
-                .file_offset = start_pos,
-                .is_container = (chunk_id == FORM || chunk_id == LIST || chunk_id == CAT || chunk_id == PROP),
-                .type = std::nullopt,
-            };
+            m_current.header.id = chunk_id;
+            m_current.header.size = chunk_size;
+            m_current.header.file_offset = start_pos;
+            m_current.header.is_container = (chunk_id == FORM || chunk_id == LIST || chunk_id == CAT || chunk_id == PROP);
+            m_current.header.type = std::nullopt;
             
             // Update depth and context
             m_current.depth = m_container_stack.empty() ? 0 : m_container_stack.top().depth + 1;
@@ -189,13 +187,12 @@ namespace iff {
             m_current.header.type = type_tag;
             
             // Push container onto stack for tracking
-            container_state state {
-                .id = header.id,
-                .type = type_tag,
-                .end_offset = content_end,
-                .depth = m_current.depth,
-                .has_prop_chunks = false  // Will be updated if we find PROP chunks
-            };
+            container_state state;
+            state.id = header.id;
+            state.type = type_tag;
+            state.end_offset = content_end;
+            state.depth = m_current.depth;
+            state.has_prop_chunks = false;  // Will be updated if we find PROP chunks
             
             m_container_stack.push(state);
             
