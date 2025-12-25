@@ -59,8 +59,7 @@ namespace iff {
         
         m_stream.seekg(static_cast<std::streamoff>(offset), dir);
         if (m_stream.fail()) {
-            // Get current position and stream size for better error message
-            auto current = m_stream.tellg();
+            // Get stream size for better error message
             m_stream.seekg(0, std::ios::end);
             auto size = m_stream.tellg();
             

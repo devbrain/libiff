@@ -91,8 +91,8 @@ namespace iff {
         
     protected:
         // Constructor for derived classes
-        chunk_iterator() : m_ended(true), m_current{} {}
-        chunk_iterator(const parse_options& opts) : m_ended(true), m_current{}, m_options(opts) {}
+        chunk_iterator() : m_current{}, m_ended(true) {}
+        chunk_iterator(const parse_options& opts) : m_current{}, m_ended(true), m_options(opts) {}
         
         // Advance to next chunk (to be implemented by derived classes)
         virtual void advance() = 0;

@@ -102,15 +102,14 @@ TEST_CASE("Reader error handling") {
         // File is truncated after container header
         // Should be able to parse container but not children
         int chunks_parsed = 0;
-        bool error_encountered = false;
-        
+
         try {
             while (it->has_next()) {
                 chunks_parsed++;
                 it->next();
             }
         } catch (const std::exception&) {
-            error_encountered = true;
+            // Error expected for truncated files
         }
         
         // Should parse the container but encounter issues with children

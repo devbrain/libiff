@@ -267,10 +267,7 @@ namespace iff {
             
             // Update header with type
             m_current.header.type = container_type;
-            
-            // Calculate actual data size (minus the 4-byte type field)
-            std::uint64_t data_size = header.size >= 4 ? header.size - 4 : 0;
-            
+
             // Calculate padding
             m_current.total_size_with_padding = header.size;
             if (header.size & 1) {

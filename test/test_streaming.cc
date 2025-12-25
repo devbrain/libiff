@@ -298,9 +298,8 @@ TEST_CASE("Streaming verification - initialization seeks") {
         
         // Iterate through all chunks
         while (it->has_next()) {
-            const auto& chunk = it->current();
-            
             // Skip reading from chunks (automatic skipping should be forward-only)
+            (void)it->current();
             it->next();
         }
         
