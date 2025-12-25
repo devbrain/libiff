@@ -95,57 +95,18 @@ endif()
 # ============================================================================
 
 if(NEUTRINO_LIBIFF_INSTALL)
-    include(GNUInstallDirs)
-    include(CMakePackageConfigHelpers)
+    include(NeutrinoInstall)
 
-    # Install public headers
-    install(DIRECTORY include/iff
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        FILES_MATCHING PATTERN "*.hh" PATTERN "*.h"
-    )
-
-    # Install generated headers
+    # Install generated headers alongside public headers
     install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/iff/export_iff.h
         ${CMAKE_CURRENT_BINARY_DIR}/iff/iff_config.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/iff
     )
 
-    # Install target
-    install(TARGETS iff
-        EXPORT iffTargets
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    )
-
-    # Install export
-    install(EXPORT iffTargets
-        FILE iffTargets.cmake
+    neutrino_install_library(iff
         NAMESPACE neutrino::
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/iff
-    )
-
-    # Generate and install config file
-    configure_package_config_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/iffConfig.cmake.in
-        ${CMAKE_CURRENT_BINARY_DIR}/iffConfig.cmake
-        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/iff
-    )
-
-    # Generate version file
-    write_basic_package_version_file(
-        ${CMAKE_CURRENT_BINARY_DIR}/iffConfigVersion.cmake
-        VERSION ${PROJECT_VERSION}
         COMPATIBILITY SameMajorVersion
-    )
-
-    # Install config files
-    install(FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/iffConfig.cmake
-        ${CMAKE_CURRENT_BINARY_DIR}/iffConfigVersion.cmake
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/iff
     )
 endif()
 

@@ -105,12 +105,7 @@ set_target_properties(iff PROPERTIES
 )
 
 # =============================================================================
-# Developer mode warnings
+# Compiler Warnings
 # =============================================================================
 
-neutrino_is_top_level(_libiff_is_top_level)
-if(_libiff_is_top_level AND NEUTRINO_LIBIFF_DEVELOPER_MODE)
-    if(TARGET neutrino::warnings)
-        target_link_libraries(iff PRIVATE neutrino::warnings)
-    endif()
-endif()
+neutrino_target_warnings(iff)
