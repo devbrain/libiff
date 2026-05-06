@@ -385,7 +385,7 @@ namespace iff {
         }
     }
     
-    std::uint64_t riff_chunk_iterator::get_size_override(fourcc id, std::uint64_t offset, std::uint32_t size_32) {
+    std::uint64_t riff_chunk_iterator::get_size_override(fourcc id, std::uint64_t /*offset*/, std::uint32_t size_32) {
         // If not RF64, or size is not the special marker, use the 32-bit size
         if (!m_is_rf64 || size_32 != 0xFFFFFFFF) {
             return size_32;

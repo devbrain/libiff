@@ -103,7 +103,7 @@ namespace iff {
                             "Chunk '" + chunk_id.to_string() + "' size " + std::to_string(chunk_size) +
                             " exceeds maximum " + std::to_string(m_options.max_chunk_size) + ", clamping to limit");
                     }
-                    chunk_size = m_options.max_chunk_size;
+                    chunk_size = static_cast<std::uint32_t>(m_options.max_chunk_size);
                 }
             }
             

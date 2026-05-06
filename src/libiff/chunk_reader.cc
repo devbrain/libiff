@@ -51,7 +51,7 @@ namespace iff {
     }
     
     std::vector<std::byte> chunk_reader::read_bytes(std::size_t n) {
-        std::size_t to_read = std::min(n, static_cast<std::size_t>(remaining()));
+        std::size_t to_read = std::min(n, remaining());
         std::vector<std::byte> result(to_read);
         
         if (to_read > 0) {

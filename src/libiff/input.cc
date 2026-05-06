@@ -83,23 +83,27 @@ namespace iff {
     }
 
     std::uint64_t reader::tell() const {
-        std::streampos pos = const_cast<std::istream&>(m_stream).tellg();
+        // The const_casts that used to live on these calls were
+        // useless: `m_stream` is a non-const reference, and the
+        // enclosing method's const-ness does not propagate through a
+        // reference member.
+        std::streampos pos = m_stream.tellg();
         THROW_IO_IF(pos == std::streampos(-1), "Tell failed");
         return static_cast<std::uint64_t>(pos);
     }
 
     std::uint64_t reader::size() const {
         // Save current position
-        std::streampos current_pos = const_cast<std::istream&>(m_stream).tellg();
+        std::streampos current_pos = m_stream.tellg();
         THROW_IO_IF(current_pos == std::streampos(-1), "Tell failed in size()");
-        
+
         // Seek to end to get size
-        const_cast<std::istream&>(m_stream).seekg(0, std::ios_base::end);
-        std::streampos end_pos = const_cast<std::istream&>(m_stream).tellg();
-        
+        m_stream.seekg(0, std::ios_base::end);
+        std::streampos end_pos = m_stream.tellg();
+
         // Restore original position
-        const_cast<std::istream&>(m_stream).seekg(current_pos);
-        
+        m_stream.seekg(current_pos);
+
         THROW_IO_IF(end_pos == std::streampos(-1), "Failed to get stream size");
         return static_cast<std::uint64_t>(end_pos);
     }
