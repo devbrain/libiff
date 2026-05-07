@@ -174,24 +174,16 @@ public:
                 std::cout << "✅ Parse completed successfully\n";
             }
             
-        } catch (const iff::format_error& e) {
-            std::cout << "❌ Format error: " << e.what() << "\n";
-            result.errors_count++;
-            
-            SecurityViolation violation;
-            violation.type = SecurityViolation::INVALID_CHUNK_SIZE;
-            violation.description = e.what();
-            result.violations.push_back(violation);
-            
-        } catch (const iff::io_error& e) {
-            std::cout << "❌ I/O error: " << e.what() << "\n";
-            result.errors_count++;
-            
-            SecurityViolation violation;
-            violation.type = SecurityViolation::TRUNCATED_FILE;
-            violation.description = e.what();
-            result.violations.push_back(violation);
-            
+            // } catch (const iff::io_error& e) {
+            //     std::cout << "❌ I/O error: " << e.what() << "\n";
+            //     result.errors_count++;
+            //
+            //     SecurityViolation violation;
+            //     violation.type = SecurityViolation::TRUNCATED_FILE;
+            //     violation.description = e.what();
+            //     result.violations.push_back(violation);
+            //
+            // }
         } catch (const std::bad_alloc& e) {
             std::cout << "❌ Memory exhaustion: " << e.what() << "\n";
             result.errors_count++;
