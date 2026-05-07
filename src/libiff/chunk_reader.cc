@@ -3,6 +3,7 @@
 //
 
 #include <iff/chunk_reader.hh>
+#include <type_traits>
 #include <array>
 #include <algorithm>
 
@@ -51,7 +52,13 @@ namespace iff {
     }
     
     std::vector<std::byte> chunk_reader::read_bytes(std::size_t n) {
-        std::size_t to_read = std::min(n, remaining());
+        std::size_t to_read = 0;
+        if constexpr (std::is_same_v<std::size_t, uint64_t>) {
+            to_read = std::min(n, remaining());
+        } else {
+            to_read = std::min(n, static_cast<size_t>(remaining()));
+        }
+
         std::vector<std::byte> result(to_read);
         
         if (to_read > 0) {
