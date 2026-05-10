@@ -5,6 +5,7 @@
  * @date 10/08/2025
  */
 #pragma once
+#include <cstddef>
 #include <array>
 #include <cstring>
 #include <cstdint>

@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <iff/parser.hh>
 #include <memory>
 #include <iosfwd>

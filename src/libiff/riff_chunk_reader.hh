@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <iff/chunk_reader.hh>
 #include "input.hh"
 #include <memory>
