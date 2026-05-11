@@ -52,12 +52,13 @@ namespace iff {
     }
     
     std::vector<std::byte> chunk_reader::read_bytes(std::size_t n) {
-        std::size_t to_read = 0;
-        if constexpr (std::is_same_v<std::size_t, uint64_t>) {
-            to_read = std::min(n, remaining());
-        } else {
-            to_read = std::min(n, static_cast<size_t>(remaining()));
-        }
+        // `remaining()` returns std::uint64_t. On platforms where
+        // size_t and uint64_t are distinct types (macOS x86_64: unsigned
+        // long vs unsigned long long) std::min can't deduce a common
+        // template parameter. `if constexpr` does NOT help here — this
+        // is a non-template function, so both arms get type-checked.
+        // Always cast to size_t.
+        std::size_t const to_read = std::min(n, static_cast<std::size_t>(remaining()));
 
         std::vector<std::byte> result(to_read);
         
